@@ -85,10 +85,10 @@ public class PublisherSearch extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
-        grid.add(locationLabel, 0, 1);
-        grid.add(locationField, 1, 1);
-        grid.add(operatorLabel, 0, 2);
-        grid.add(operatorDropdown, 1, 2);
+        grid.add(locationLabel, 0, 2);
+        grid.add(locationField, 1, 2);
+        grid.add(operatorLabel, 0, 1);
+        grid.add(operatorDropdown, 1, 1);
 
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
