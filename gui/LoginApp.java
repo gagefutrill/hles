@@ -1,4 +1,4 @@
-package gui;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -65,7 +65,7 @@ public class LoginApp extends Application {
                 message.setText("Your login was successfull");
                
                 primaryStage.close();
-                SearchMenu searchMenu = new SearchMenu();
+                SearchMenu searchMenu = new SearchMenu(conn);
 
                 // Call the start() method on the SearchMenu instance
                 searchMenu.start(primaryStage);

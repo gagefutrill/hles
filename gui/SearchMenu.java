@@ -1,4 +1,7 @@
-package gui;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -10,7 +13,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class SearchMenu extends Application {
-    
+	private Connection conn;
+    public SearchMenu(Connection connection) {
+    	this.conn = connection;
+    }
     @Override
     public void start(Stage primaryStage) {
         // Set the title of the window
@@ -44,6 +50,15 @@ public class SearchMenu extends Application {
         
         // Show the window
         primaryStage.show();
+        
+        publisherBtn.setOnAction(event -> {
+            PublisherSearch pubSearch = new PublisherSearch(conn);
+            try {
+				pubSearch.start(primaryStage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        });
     }
     
     public static void main(String[] args) {
