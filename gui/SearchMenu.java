@@ -1,4 +1,4 @@
-
+package gui;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -43,7 +43,7 @@ public class SearchMenu extends Application {
         primaryStage.setScene(scene);
         
         // Show the window
-        primaryStage.show(); 
+        primaryStage.show();
     }
     
     public static void main(String[] args) {
