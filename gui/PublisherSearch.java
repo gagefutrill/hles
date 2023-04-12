@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,14 +21,19 @@ import java.sql.SQLException;
 public class PublisherSearch extends Application {
 
     private Connection conn;
-
-    public PublisherSearch(Connection conn) {
-        this.conn = conn;
+    private String user, pass, url;
+    
+    public PublisherSearch(String url,String user, String pass) {
+        this.user = user;
+        this.pass = pass;
+        this.url = url;
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+    	// Set Window Title and create connection
         primaryStage.setTitle("Search Publishers");
+        conn = DriverManager.getConnection(url, user, pass);
 
         // Create labels and text fields for searching
         Label nameLabel = new Label("Name:");
@@ -47,33 +53,33 @@ public class PublisherSearch extends Application {
         searchButton.setOnAction(e -> {
             // Get search parameters
             String name = nameField.getText();
-            String location = locationField.getText();
+            String city = locationField.getText();
             String operator = operatorDropdown.getValue();
 
             // Construct query
-            String query = "SELECT * FROM hles.publisher WHERE ";
+            String query = "SELECT name, city FROM hles.publisher WHERE ";
             if (operator.equals("AND")) {
-                query += "name LIKE ? AND location LIKE ?";
+                query += "name LIKE ? AND city LIKE ?";
             } else {
-                query += "name LIKE ? OR location LIKE ?";
+                query += "name LIKE ? OR city LIKE ?";
             }
 
             try {
                 // Execute query
                 PreparedStatement stmt = conn.prepareStatement(query);
                 stmt.setString(1, "%" + name + "%");
-                stmt.setString(2, "%" + location + "%");
+                stmt.setString(2, "%" + city + "%");
                 ResultSet rs = stmt.executeQuery();
 
                 // Display results in console
                 while (rs.next()) {
-                    int id = rs.getInt("publisher_id");
                     String nameResult = rs.getString("name");
-                    String locationResult = rs.getString("location");
-                    System.out.println(id + " " + nameResult + " " + locationResult);
+                    String locationResult = rs.getString("city");
+                    System.out.println("Name: " + nameResult + " Location: " + locationResult);
                 }
             } catch (SQLException ex) {
                 System.out.println("Error executing query: " + ex.getMessage());
+                ex.printStackTrace();
             }
         });
 

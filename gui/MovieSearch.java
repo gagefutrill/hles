@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,15 +19,18 @@ import java.sql.SQLException;
 public class MovieSearch extends Application {
 
     private Connection conn;
-
-    public MovieSearch(Connection conn) {
-        this.conn = conn;
+    private String user, pass, url;
+    
+    public MovieSearch(String url,String user, String pass) {
+        this.user = user;
+        this.pass = pass;
+        this.url = url;
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Search Movies");
-
+        conn = DriverManager.getConnection(url, user, pass);
         // Create labels and text fields for searching
         Label nameLabel = new Label("Title:");
         TextField nameField = new TextField();

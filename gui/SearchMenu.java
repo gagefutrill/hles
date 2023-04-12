@@ -12,13 +12,19 @@ import javafx.stage.Stage;
 
 public class SearchMenu extends Application {
 	private Connection conn;
-    public SearchMenu(Connection connection) {
-    	this.conn = connection;
+	private String user, pass, url;
+	
+    public SearchMenu(String url, String user, String pass) {
+        this.user = user;
+        this.pass = pass;
+        this.url = url;
     }
+    
     @Override
-    public void start(Stage primaryStage) {
-        // Set the title of the window
+    public void start(Stage primaryStage) throws SQLException {
+        // Set the title of the window and connect
         primaryStage.setTitle("Search Menu");
+        conn = DriverManager.getConnection(url, user, pass);
         
         // Create the buttons
         Button publisherBtn = new Button("Publisher");
@@ -50,7 +56,7 @@ public class SearchMenu extends Application {
         primaryStage.show();
         
         publisherBtn.setOnAction(event -> {
-            PublisherSearch pubSearch = new PublisherSearch(conn);
+            PublisherSearch pubSearch = new PublisherSearch(url,user,pass);
             try {
 				pubSearch.start(primaryStage);
 			} catch (Exception e) {
@@ -58,7 +64,7 @@ public class SearchMenu extends Application {
 			}
         });
         journalBtn.setOnAction(event -> {
-            JournalSearch journalSearch = new JournalSearch(conn);
+            JournalSearch journalSearch = new JournalSearch(url,user,pass);
             try {
 				journalSearch.start(primaryStage);
 			} catch (Exception e) {
@@ -67,7 +73,7 @@ public class SearchMenu extends Application {
             
         });
         movieBtn.setOnAction(event -> {
-            MovieSearch MovieSearch = new MovieSearch(conn);
+            MovieSearch MovieSearch = new MovieSearch(url,user,pass);
             try {
 				MovieSearch.start(primaryStage);
 			} catch (Exception e) {

@@ -67,7 +67,7 @@ public class LoginApp extends Application {
                 message.setText("Your login was successfull");
                
                 primaryStage.close();
-                SearchMenu searchMenu = new SearchMenu(conn);
+                SearchMenu searchMenu = new SearchMenu(DB_URL,USER,PASS);
 
                 // Call the start() method on the SearchMenu instance
                 searchMenu.start(primaryStage);
