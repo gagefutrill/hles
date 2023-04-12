@@ -55,58 +55,8 @@ public class MovieSearch extends Application {
 
         // Create search button
         Button searchButton = new Button("Search");
-        searchButton.setOnAction(e -> {
-            // Get search parameters
-            String name = nameField.getText();
-            String edition = editionField.getText();
-            String director = directorField.getText();
-            String isbn = isbnField.getText();
-            String pubYear = pubYearField.getText();
-            String genre = genreField.getText();
-            String language = languageField.getText();
-            
-
-
-            // Construct query
-            String query = "SELECT * FROM hles.movie WHERE ";
-                   query += "name LIKE ? OR edition LIKE ?";
-                   query += "director LIKE ? OR isbn LIKE ?";
-                   query += "pubYear LIKE ? OR genre LIKE ? OR language LIKE ?";
-                   
-
-            try {
-                // Execute query
-                PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setString(1, "%" + name + "%");
-                stmt.setString(2, "%" + edition + "%");
-                stmt.setString(3, "%" + director + "%");
-                stmt.setString(4, "%" + isbn + "%");
-                stmt.setString(5, "%" + pubYear + "%");
-                stmt.setString(6, "%" + genre + "%");
-                stmt.setString(7, "%" + language + "%");
-                
-                ResultSet rs = stmt.executeQuery();
-
-                // Display results in console
-                while (rs.next()) {
-                    int id = rs.getInt("Journal_id");
-                    String nameResult = rs.getString("name");
-                    String editionResult = rs.getString("Edition");
-                    String directorResult = rs.getString("Director");
-                    String isbnResult = rs.getString("ISBN");
-                    String pubYearResult = rs.getString("Publish Year");
-                    String genreResult = rs.getString("Genre");
-                    String languageResult = rs.getString("Language");
-              
-                    
-                    System.out.println(id + " " + nameResult + " " + editionResult + " " + directorResult + " " + isbnResult + " " + pubYearResult + " " + genreResult + " " + languageResult);
-                }
-            } catch (SQLException ex) {
-                System.out.println("Error executing query: " + ex.getMessage());
-            }
-        });
-
-        // Create layout
+        
+     // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -141,6 +91,59 @@ public class MovieSearch extends Application {
         Scene scene = new Scene(vbox, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setMaximized(true);
+        
+        //Search Action
+        searchButton.setOnAction(e -> {
+            // Get search parameters
+            String name = nameField.getText();
+            String edition = editionField.getText();
+            String director = directorField.getText();
+            String isbn = isbnField.getText();
+            String pubYear = pubYearField.getText();
+            String genre = genreField.getText();
+            String language = languageField.getText();
+          
+            // Construct query
+            String query = "SELECT * FROM hles.movie WHERE ";
+                   query += "name LIKE ? OR edition LIKE ?";
+                   query += "director LIKE ? OR isbn LIKE ?";
+                   query += "pubYear LIKE ? OR genre LIKE ? OR language LIKE ?";
+                   
+                  
+            try {
+                // Execute query
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, "%" + name + "%");
+                stmt.setString(2, "%" + edition + "%");
+                stmt.setString(3, "%" + director + "%");
+                stmt.setString(4, "%" + isbn + "%");
+                stmt.setString(5, "%" + pubYear + "%");
+                stmt.setString(6, "%" + genre + "%");
+                stmt.setString(7, "%" + language + "%");
+                
+                ResultSet rs = stmt.executeQuery();
+
+                // Display results in console
+                while (rs.next()) {
+                    int id = rs.getInt("Journal_id");
+                    String nameResult = rs.getString("name");
+                    String editionResult = rs.getString("Edition");
+                    String directorResult = rs.getString("Director");
+                    String isbnResult = rs.getString("ISBN");
+                    String pubYearResult = rs.getString("Publish Year");
+                    String genreResult = rs.getString("Genre");
+                    String languageResult = rs.getString("Language");
+              
+                    
+                    System.out.println(id + " " + nameResult + " " + editionResult + " " + directorResult + " " + isbnResult + " " + pubYearResult + " " + genreResult + " " + languageResult);
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error executing query: " + ex.getMessage());
+            }
+        });
+
+        
     }
 
 }

@@ -1,5 +1,5 @@
-
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -37,7 +36,7 @@ public class PublisherSearch extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-    	// Set Window Title and create connection
+    	// Set Window Titleand create connection
         primaryStage.setTitle("Search Publishers");
         conn = DriverManager.getConnection(url, user, pass);
 
@@ -48,20 +47,6 @@ public class PublisherSearch extends Application {
         Label locationLabel = new Label("Location:");
         TextField locationField = new TextField();
 
-        
-        TableView<Publisher> table = new TableView<>();
-        table.setEditable(false);
-        table.setPrefSize(400, 200);
-
-        TableColumn<Publisher, String> nameColumn = new TableColumn<>("Name");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-        TableColumn<Publisher, String> locationColumn = new TableColumn<>("Location");
-        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-
-        table.getColumns().addAll(nameColumn, locationColumn);
-
-        
         // Create dropdown for choosing search operator
         Label operatorLabel = new Label("Search Operator:");
         ComboBox<String> operatorDropdown = new ComboBox<>();
@@ -70,41 +55,6 @@ public class PublisherSearch extends Application {
 
         // Create search button
         Button searchButton = new Button("Search");
-        searchButton.setOnAction(e -> {
-            // Get search parameters
-            String name = nameField.getText();
-            String city = locationField.getText();
-            String operator = operatorDropdown.getValue();
-
-            // Construct query
-            String query = "SELECT name, city FROM hles.publisher WHERE ";
-            if (operator.equals("AND")) {
-                query += "name LIKE ? AND city LIKE ?";
-            } else {
-                query += "name LIKE ? OR city LIKE ?";
-            }
-
-            try {
-                // Execute query
-                PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setString(1, "%" + name + "%");
-                stmt.setString(2, "%" + city + "%");
-                ResultSet rs = stmt.executeQuery();
-                ObservableList<Publisher> publishers = FXCollections.observableArrayList();
-                // Display results in console
-                while (rs.next()) {
-                    String nameResult = rs.getString("name");
-                    String locationResult = rs.getString("city");
-                    //System.out.println("Name: " + nameResult + " Location: " + locationResult);
-                    publishers.add(new Publisher(nameResult,locationResult));
-                }
-                table.setItems(publishers);
-            } catch (SQLException ex) {
-                System.out.println("Error executing query: " + ex.getMessage());
-                ex.printStackTrace();
-            }
-        });
-
         // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -119,23 +69,79 @@ public class PublisherSearch extends Application {
         grid.add(operatorDropdown, 1, 1);
 
         HBox hbox = new HBox(10);
-        hbox.setAlignment(Pos.CENTER);
+        hbox.setAlignment(Pos.TOP_CENTER);
         hbox.getChildren().add(searchButton);
 
         VBox vbox = new VBox(20);
-        vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(grid, hbox, table);
+        vbox.setAlignment(Pos.TOP_CENTER);
+        vbox.getChildren().addAll(grid, hbox);
 
         // Set scene and show window
-        Scene scene = new Scene(vbox, 400, 300);
+        Scene scene = new Scene(vbox, 1000, 600);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
+        //set Button Action
+        searchButton.setOnAction(e -> {
+        	//Create table for output
+        	TableView<Publisher> table = new TableView<>();
+            table.setEditable(false);
+            table.setPrefSize(400, 400);
+            TableColumn<Publisher, String> idColumn = new TableColumn<>("ID");
+            idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+            TableColumn<Publisher, String> nameColumn = new TableColumn<>("Name");
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            TableColumn<Publisher, String> locationColumn = new TableColumn<>("Location");
+            locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+            table.getColumns().addAll(idColumn,nameColumn, locationColumn);
+             
+            // Get search parameters
+            String name = nameField.getText();
+            String city = locationField.getText();
+            String operator = operatorDropdown.getValue();
+
+            // Construct query
+            String query = "SELECT publisher_id,name, city FROM hles.publisher WHERE ";
+            if (operator.equals("AND")) {
+                query += "name LIKE ? AND city LIKE ?";
+            } else {
+                query += "name LIKE ? OR city LIKE ?";
+            }
+
+            try {
+                // Execute query
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, "%" + name + "%");
+                stmt.setString(2, "%" + city + "%");
+                ResultSet rs = stmt.executeQuery();
+                //Create List to store entries in
+                ObservableList<Publisher> publishers = FXCollections.observableArrayList();
+                //Add results to table
+                while (rs.next()) {
+                	int idResult = rs.getInt("publisher_id");
+                    String nameResult = rs.getString("name");
+                    String locationResult = rs.getString("city");
+                    //System.out.println("Name: " + nameResult + " Location: " + locationResult);
+                    publishers.add(new Publisher(idResult,nameResult,locationResult));
+                }
+                //Add table with results to the window
+                vbox.getChildren().addAll(table);
+                table.setItems(publishers);
+            } catch (SQLException ex) {
+                System.out.println("Error executing query: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+
+       
     }
     public static class Publisher {
+    	private  SimpleIntegerProperty id;
         private  SimpleStringProperty name;
         private  SimpleStringProperty location;
 
-        public Publisher(String name, String location) {
+        public Publisher(int id, String name, String location) {
+        	this.id = new SimpleIntegerProperty(id);
             this.name = new SimpleStringProperty(name);
             this.location = new SimpleStringProperty(location);
         }
@@ -146,6 +152,9 @@ public class PublisherSearch extends Application {
 
         public String getLocation() {
             return location.get();
+        }
+        public int getId() {
+        	return id.get();
         }
     }
 }

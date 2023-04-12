@@ -19,8 +19,8 @@ import javafx.stage.Stage;
 public class LoginApp extends Application {
     
     private static String DB_URL = "jdbc:mysql://35.231.200.99/hles";
-    private static String USER = "username";
-    private static String PASS = "password";
+    private static String USER = "root";
+    private static String PASS = "G@geF2308";
     
     @Override
     public void start(Stage primaryStage) {
@@ -33,7 +33,7 @@ public class LoginApp extends Application {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Text sceneTitle = new Text("Welcome to the Library Database");
+        Text sceneTitle = new Text("Welcome to the Henderson Library Database");
         sceneTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(sceneTitle, 0, 0, 2, 1);
 
@@ -57,8 +57,8 @@ public class LoginApp extends Application {
         
         // Event handler for the login button
         btn.setOnAction(event -> {
-            USER = userTextField.getText();
-            PASS = passwordField.getText();
+            //USER = userTextField.getText();
+            //PASS = passwordField.getText();
         	//USER="Ryan";
             //PASS="ryan.clements";
 
