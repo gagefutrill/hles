@@ -79,6 +79,7 @@ public class LoginApp extends Application {
         
         Scene scene = new Scene(grid, 600, 275);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
