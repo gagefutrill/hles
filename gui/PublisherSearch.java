@@ -1,12 +1,18 @@
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -42,6 +48,20 @@ public class PublisherSearch extends Application {
         Label locationLabel = new Label("Location:");
         TextField locationField = new TextField();
 
+        
+        TableView<Publisher> table = new TableView<>();
+        table.setEditable(false);
+        table.setPrefSize(400, 200);
+
+        TableColumn<Publisher, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Publisher, String> locationColumn = new TableColumn<>("Location");
+        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+
+        table.getColumns().addAll(nameColumn, locationColumn);
+
+        
         // Create dropdown for choosing search operator
         Label operatorLabel = new Label("Search Operator:");
         ComboBox<String> operatorDropdown = new ComboBox<>();
@@ -70,13 +90,15 @@ public class PublisherSearch extends Application {
                 stmt.setString(1, "%" + name + "%");
                 stmt.setString(2, "%" + city + "%");
                 ResultSet rs = stmt.executeQuery();
-
+                ObservableList<Publisher> publishers = FXCollections.observableArrayList();
                 // Display results in console
                 while (rs.next()) {
                     String nameResult = rs.getString("name");
                     String locationResult = rs.getString("city");
-                    System.out.println("Name: " + nameResult + " Location: " + locationResult);
+                    //System.out.println("Name: " + nameResult + " Location: " + locationResult);
+                    publishers.add(new Publisher(nameResult,locationResult));
                 }
+                table.setItems(publishers);
             } catch (SQLException ex) {
                 System.out.println("Error executing query: " + ex.getMessage());
                 ex.printStackTrace();
@@ -102,12 +124,28 @@ public class PublisherSearch extends Application {
 
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(grid, hbox);
+        vbox.getChildren().addAll(grid, hbox, table);
 
         // Set scene and show window
         Scene scene = new Scene(vbox, 400, 300);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+    public static class Publisher {
+        private  SimpleStringProperty name;
+        private  SimpleStringProperty location;
 
+        public Publisher(String name, String location) {
+            this.name = new SimpleStringProperty(name);
+            this.location = new SimpleStringProperty(location);
+        }
+
+        public String getName() {
+            return name.get();
+        }
+
+        public String getLocation() {
+            return location.get();
+        }
+    }
 }
