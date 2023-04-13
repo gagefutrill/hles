@@ -125,6 +125,7 @@ public class PublisherSearch extends Application {
                     publishers.add(new Publisher(idResult,nameResult,locationResult));
                 }
                 //Add table with results to the window
+        		vbox.getChildren().remove(table);
                 vbox.getChildren().addAll(table);
                 table.setItems(publishers);
             } catch (SQLException ex) {

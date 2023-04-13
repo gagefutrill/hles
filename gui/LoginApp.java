@@ -19,8 +19,8 @@ import javafx.stage.Stage;
 public class LoginApp extends Application {
     
     private static String DB_URL = "jdbc:mysql://35.231.200.99/hles";
-    private static String USER = "root";
-    private static String PASS = "G@geF2308";
+    private static String USER = "";
+    private static String PASS = "";
     
     @Override
     public void start(Stage primaryStage) {
@@ -65,12 +65,11 @@ public class LoginApp extends Application {
             // Authenticate the user against the database
             try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)){
                 message.setText("Your login was successfull");
-               
-                primaryStage.close();
+                //Create and open instance of Search Menu
                 SearchMenu searchMenu = new SearchMenu(DB_URL,USER,PASS);
-
-                // Call the start() method on the SearchMenu instance
+                primaryStage.close();
                 searchMenu.start(primaryStage);
+                
             } catch (SQLException e) {
             	message.setText("Invalid username or password");
                 e.printStackTrace();
@@ -79,8 +78,9 @@ public class LoginApp extends Application {
         
         Scene scene = new Scene(grid, 600, 275);
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(true);
         primaryStage.show();
+        //primaryStage.setMaximized(true);
+
     }
 
     public static void main(String[] args) {

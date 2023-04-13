@@ -52,9 +52,10 @@ public class SearchMenu extends Application {
         Scene scene = new Scene(vbox, 220, 350);
         primaryStage.setScene(scene);
         
-        // Show the window
+        // Show the maximized window
         primaryStage.show();
-        
+        //primaryStage.setMaximized(true);
+
         publisherBtn.setOnAction(event -> {
             PublisherSearch pubSearch = new PublisherSearch(url,user,pass);
             try {
@@ -80,8 +81,16 @@ public class SearchMenu extends Application {
 				e.printStackTrace();
 			}
         });
-       
-        
+        bookBtn.setOnAction(event -> {
+        	BookSearch bookSearch = new BookSearch(url,user,pass);
+        	try {
+				bookSearch.start(primaryStage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        	
+        	
+        });
     }
     
     public static void main(String[] args) {

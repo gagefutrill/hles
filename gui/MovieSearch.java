@@ -1,11 +1,17 @@
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -32,8 +38,8 @@ public class MovieSearch extends Application {
         primaryStage.setTitle("Search Movies");
         conn = DriverManager.getConnection(url, user, pass);
         // Create labels and text fields for searching
-        Label nameLabel = new Label("Title:");
-        TextField nameField = new TextField();
+        Label titleLabel = new Label("Title:");
+        TextField titleField = new TextField();
 
         Label editionLabel = new Label("Edition:");
         TextField editionField = new TextField();
@@ -43,6 +49,9 @@ public class MovieSearch extends Application {
         
         Label isbnLabel = new Label("ISBN:");
         TextField isbnField = new TextField();
+        
+        Label pubLabel = new Label("Publisher:");
+        TextField pubField = new TextField();
         
         Label pubYearLabel = new Label("Publish Year:");
         TextField pubYearField = new TextField();
@@ -56,23 +65,50 @@ public class MovieSearch extends Application {
         // Create search button
         Button searchButton = new Button("Search");
         
-     // Create layout
+        //Create Table and its columns
+        TableView<Movie> table = new TableView<>();
+        table.setEditable(false);
+        table.setPrefSize(400, 400);
+        TableColumn<Movie, String> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Movie, String> titleCol = new TableColumn<>("Title");
+        titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
+        TableColumn<Movie, String> editionCol = new TableColumn<>("Edition");
+        editionCol.setCellValueFactory(new PropertyValueFactory<>("edition"));
+        TableColumn<Movie, String> directorCol = new TableColumn<>("Director");
+        directorCol.setCellValueFactory(new PropertyValueFactory<>("director"));
+        TableColumn<Movie, String> isbnCol = new TableColumn<>("ISBN");
+        isbnCol.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        TableColumn<Movie, String> pubCol = new TableColumn<>("Publisher");
+        pubCol.setCellValueFactory(new PropertyValueFactory<>("publisher"));
+        TableColumn<Movie, String> pubDateCol = new TableColumn<>("Publish Date");
+        pubDateCol.setCellValueFactory(new PropertyValueFactory<>("publish_date"));
+        TableColumn<Movie, String> genreCol = new TableColumn<>("Genre");
+        genreCol.setCellValueFactory(new PropertyValueFactory<>("genreName"));
+        TableColumn<Movie, String> langCol = new TableColumn<>("Language");
+        langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
+        table.getColumns().addAll(idCol,titleCol,editionCol,directorCol,isbnCol,pubCol,pubDateCol,genreCol,langCol);
+        
+        
+        // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(30);
         grid.setPadding(new Insets(25, 25, 25, 25));
         
-        grid.add(nameLabel, 0, 0);
-        grid.add(nameField, 1, 0);
+        grid.add(titleLabel, 0, 0);
+        grid.add(titleField, 1, 0);
         grid.add(editionLabel, 2, 1);
         grid.add(editionField, 3, 1);
         grid.add(directorLabel, 0, 1);
         grid.add(directorField, 1, 1);
         grid.add(isbnLabel, 2, 0);
         grid.add(isbnField, 3, 0);
-        grid.add(pubYearLabel, 0, 3);
-        grid.add(pubYearField, 1, 3);
+        grid.add(pubLabel, 0, 3);
+        grid.add(pubField, 1, 3);
+        grid.add(pubYearLabel, 2, 3);
+        grid.add(pubYearField, 3, 3);
         grid.add(genreLabel, 0, 2);
         grid.add(genreField, 1, 2);
         grid.add(languageLabel, 2, 2);
@@ -96,54 +132,115 @@ public class MovieSearch extends Application {
         //Search Action
         searchButton.setOnAction(e -> {
             // Get search parameters
-            String name = nameField.getText();
+            String title = titleField.getText();
             String edition = editionField.getText();
             String director = directorField.getText();
             String isbn = isbnField.getText();
+            String pub = pubField.getText();
             String pubYear = pubYearField.getText();
             String genre = genreField.getText();
             String language = languageField.getText();
           
             // Construct query
-            String query = "SELECT * FROM hles.movie WHERE ";
-                   query += "name LIKE ? OR edition LIKE ?";
-                   query += "director LIKE ? OR isbn LIKE ?";
-                   query += "pubYear LIKE ? OR genre LIKE ? OR language LIKE ?";
+            String query = "SELECT movie.movie_id,movie.title,movie.edition,movie.director,movie.isbn,publisher.name,movie.publish_date,genre.name,language.name FROM hles.movie "
+            		+ "INNER JOIN genre ON movie.genre_id = genre.genre_id "
+            		+ "INNER JOIN language ON movie.language_id = language.language_id "
+            		+ "INNER JOIN publisher_of ON movie.movie_id = publisher_of.movie_id "
+            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id WHERE ";
+                   query += "movie.title LIKE ? AND movie.edition LIKE ? AND ";
+                   query += "movie.director LIKE ? AND movie.isbn LIKE ? AND publisher.name LIKE ? AND ";
+                   query += "movie.publish_date LIKE ? AND genre.name LIKE ? AND language.name LIKE ?";
                    
                   
             try {
                 // Execute query
                 PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setString(1, "%" + name + "%");
+                stmt.setString(1, "%" + title + "%");
                 stmt.setString(2, "%" + edition + "%");
                 stmt.setString(3, "%" + director + "%");
                 stmt.setString(4, "%" + isbn + "%");
-                stmt.setString(5, "%" + pubYear + "%");
-                stmt.setString(6, "%" + genre + "%");
-                stmt.setString(7, "%" + language + "%");
+                stmt.setString(5, "%" + pub + "%");
+                stmt.setString(6, "%" + pubYear + "%");
+                stmt.setString(7, "%" + genre + "%");
+                stmt.setString(8, "%" + language + "%");
                 
                 ResultSet rs = stmt.executeQuery();
 
+                ObservableList<Movie> movies = FXCollections.observableArrayList();
                 // Display results in console
                 while (rs.next()) {
-                    int id = rs.getInt("Journal_id");
-                    String nameResult = rs.getString("name");
-                    String editionResult = rs.getString("Edition");
-                    String directorResult = rs.getString("Director");
-                    String isbnResult = rs.getString("ISBN");
-                    String pubYearResult = rs.getString("Publish Year");
-                    String genreResult = rs.getString("Genre");
-                    String languageResult = rs.getString("Language");
+                    String id = rs.getString("movie.movie_id");
+                    String titleResult = rs.getString("movie.title");
+                    String editionResult = rs.getString("movie.edition");
+                    String directorResult = rs.getString("movie.director");
+                    String isbnResult = rs.getString("movie.isbn");
+                    String pubResult = rs.getString("publisher.name");
+                    String pubYearResult = rs.getString("movie.publish_date");
+                    String genreResult = rs.getString("genre.name");
+                    String languageResult = rs.getString("language.name");
               
-                    
-                    System.out.println(id + " " + nameResult + " " + editionResult + " " + directorResult + " " + isbnResult + " " + pubYearResult + " " + genreResult + " " + languageResult);
+                    movies.add(new Movie(id,titleResult,editionResult,directorResult,isbnResult,pubResult,pubYearResult,genreResult,languageResult));
                 }
+                //Remove any existing table and add new Results table to window
+                vbox.getChildren().remove(table);
+                vbox.getChildren().addAll(table);
+                table.setItems(movies);
             } catch (SQLException ex) {
                 System.out.println("Error executing query: " + ex.getMessage());
+                ex.printStackTrace();
             }
         });
 
         
     }
-
+    public static class Movie {
+    	private SimpleStringProperty id;
+    	private SimpleStringProperty title;
+    	private SimpleStringProperty edition;
+    	private SimpleStringProperty director;
+    	private SimpleStringProperty isbn;
+    	private SimpleStringProperty publisher;
+    	private SimpleStringProperty publish_date;
+    	private SimpleStringProperty genreName;
+    	private SimpleStringProperty langName;
+    	
+    	public Movie (String id, String title, String edition, String director, String isbn, String publisher, String pub_date, String genreName, String langName) {
+    		this.id = new SimpleStringProperty(id);
+    		this.title = new SimpleStringProperty(title);
+    		this.edition = new SimpleStringProperty(edition);
+    		this.director = new SimpleStringProperty(director);
+    		this.isbn = new SimpleStringProperty(isbn);
+    		this.publisher = new SimpleStringProperty(publisher);
+    		this.publish_date = new SimpleStringProperty(pub_date);
+    		this.genreName = new SimpleStringProperty(genreName);
+    		this.langName = new SimpleStringProperty(langName);
+    	}
+		public String getId() {
+			return id.get();
+		}
+		public String getTitle() {
+			return title.get();
+		}
+		public String getEdition() {
+			return edition.get();
+		}
+		public String getDirector() {
+			return director.get();
+		}
+		public String getIsbn() {
+			return isbn.get();
+		}
+		public String getPublisher() {
+			return publisher.get();
+		}
+		public String getPublish_date() {
+			return publish_date.get();
+		}
+		public String getGenreName() {
+			return genreName.get();
+		}
+		public String getLangName() {
+			return langName.get();
+		}
+    }
 }

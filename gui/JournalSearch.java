@@ -51,8 +51,8 @@ public class JournalSearch extends Application {
         Label issnLabel = new Label("ISSN:");
         TextField issnField = new TextField();
         
-        Label numArtLabel = new Label("Number of Articles:");
-        TextField numArtField = new TextField();
+        Label pubLabel = new Label("Publsher: ");
+        TextField pubField = new TextField();
         
         Label pubdateLabel = new Label("Publish Date:");
         TextField pubdateField = new TextField();
@@ -60,8 +60,8 @@ public class JournalSearch extends Application {
         Label genreLabel = new Label("Genre:");
         TextField genreField = new TextField();
         
-        Label languageLabel = new Label("Language:");
-        TextField languageField = new TextField();
+        Label langLabel = new Label("Language:");
+        TextField langField = new TextField();
 
         //Create Table and its columns
         TableView<Journal> table = new TableView<>();
@@ -79,13 +79,15 @@ public class JournalSearch extends Application {
         issnCol.setCellValueFactory(new PropertyValueFactory<>("issn"));
         TableColumn<Journal, String> numArtCol = new TableColumn<>("Number of Articles");
         numArtCol.setCellValueFactory(new PropertyValueFactory<>("num_articles"));
+        TableColumn<Journal, String> pubCol = new TableColumn<>("Publisher");
+        pubCol.setCellValueFactory(new PropertyValueFactory<>("publisher"));
         TableColumn<Journal, String> pubDateCol = new TableColumn<>("Publish Date");
         pubDateCol.setCellValueFactory(new PropertyValueFactory<>("pub_date"));
         TableColumn<Journal, String> genreCol = new TableColumn<>("Genre");
         genreCol.setCellValueFactory(new PropertyValueFactory<>("genreName"));
         TableColumn<Journal, String> langCol = new TableColumn<>("Language");
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
-        table.getColumns().addAll(idCol,titleCol,issueCol,volumeCol,issnCol,numArtCol,pubDateCol,genreCol,langCol);
+        table.getColumns().addAll(idCol,titleCol,issueCol,volumeCol,issnCol,numArtCol,pubCol,pubDateCol,genreCol,langCol);
         
         // Create search button
         Button searchButton = new Button("Search");
@@ -109,33 +111,32 @@ public class JournalSearch extends Application {
         grid.add(issnLabel, 2, 0);
         grid.add(issnField, 3, 0);
         
-        grid.add(numArtLabel, 2, 3);
-        grid.add(numArtField, 3, 3);
+        grid.add(pubdateLabel, 2, 3);
+        grid.add(pubdateField, 3, 3);
         
-        grid.add(pubdateLabel, 0, 3);
-        grid.add(pubdateField, 1, 3);
+        grid.add(pubLabel, 0, 3);
+        grid.add(pubField, 1, 3);
         
         grid.add(genreLabel, 0, 2);
         grid.add(genreField, 1, 2);
         
-        grid.add(languageLabel, 2, 2);
-        grid.add(languageField, 3, 2);
+        grid.add(langLabel, 2, 2);
+        grid.add(langField, 3, 2);
         
-
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
         hbox.getChildren().add(searchButton);
 
         VBox vbox = new VBox(20);
-        vbox.setAlignment(Pos.TOP_LEFT);
+        vbox.setAlignment(Pos.TOP_CENTER);
         vbox.getChildren().addAll(grid, hbox);
 
         // Set scene and show window
-        Scene scene = new Scene(vbox, 600, 400);
+        Scene scene = new Scene(vbox, 800, 400);
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(true);
         primaryStage.show();
-        
+        //primaryStage.setMaximized(true);
+
         //Search Button Action
         searchButton.setOnAction(e -> {
             // Get search parameters
@@ -143,20 +144,22 @@ public class JournalSearch extends Application {
             String issue = issueField.getText();
             String volume = volumeField.getText();
             String issn = issnField.getText();
-            String numArt = numArtField.getText();
+            String publisher = pubField.getText();
             String pubDate = pubdateField.getText();
-            String genre = pubdateField.getText();
-            String language = pubdateField.getText();
+            String genre = genreField.getText();
+            String language = langField.getText();
             
       
 
             // Construct query
-            String query = "SELECT journal.journal_id, journal.title, journal.issue, journal.volume, journal.issn, journal.num_articles, journal.pub_date, genre.name, language.name FROM hles.journal "
+            String query = "SELECT journal.journal_id, journal.title, journal.issue, journal.volume, journal.issn, journal.num_articles, publisher.name, journal.pub_date, genre.name, language.name FROM hles.journal "
             		+ "INNER JOIN genre ON journal.genre_id = genre.genre_id "
-            		+ "INNER JOIN language ON journal.language_id = language.language_id WHERE ";
+            		+ "INNER JOIN language ON journal.language_id = language.language_id "
+            		+ "INNER JOIN publisher_of ON journal.journal_id = publisher_of.journal_id "
+            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id WHERE ";
                    query += "journal.title LIKE ? AND journal.issue LIKE ? AND ";
                    query += "journal.volume LIKE ? AND journal.issn LIKE ? AND ";
-                   query += "journal.num_articles LIKE ? AND journal.pub_date LIKE ? AND ";
+                   query += "publisher.name LIKE ? AND journal.pub_date LIKE ? AND ";
                    query += "genre.name LIKE ? AND language.name LIKE ? ";
 
             try {
@@ -166,10 +169,10 @@ public class JournalSearch extends Application {
                 stmt.setString(2, "%" + issue + "%");
                 stmt.setString(3, "%" + volume + "%");
                 stmt.setString(4, "%" + issn + "%");
-                stmt.setString(5, "%" + numArt + "%");
-                stmt.setString(6, "%" + pubDate + "%");
-                stmt.setString(7, "%" + genre + "%");
-                stmt.setString(8, "%" + language + "%");
+                stmt.setString(6, "%" + publisher + "%");
+                stmt.setString(7, "%" + pubDate + "%");
+                stmt.setString(8, "%" + genre + "%");
+                stmt.setString(9, "%" + language + "%");
                 
                 ResultSet rs = stmt.executeQuery();
                 
@@ -182,12 +185,15 @@ public class JournalSearch extends Application {
                     String volumeResult = rs.getString("journal.volume");
                     String issnResult = rs.getString("journal.issn");
                     String numArtResult = rs.getString("journal.num_articles");
+                    String pubResult = rs.getString("publisher.name");
                     String pubdateResult = rs.getString("journal.pub_date");
                     String genreResult = rs.getString("genre.name");
                     String languageResult = rs.getString("language.name");
                     
-                    journals.add(new Journal(id,titleResult,issueResult,volumeResult,issnResult,numArtResult,pubdateResult,genreResult,languageResult));
+                    journals.add(new Journal(id,titleResult,issueResult,volumeResult,issnResult,numArtResult,pubResult,pubdateResult,genreResult,languageResult));
                 }
+                //Remove any existing table and add new Results table to window
+        		vbox.getChildren().remove(table);
                 vbox.getChildren().addAll(table);
                 table.setItems(journals);
             } catch (SQLException ex) {
@@ -205,17 +211,19 @@ public class JournalSearch extends Application {
     	private SimpleStringProperty volume;
     	private SimpleStringProperty issn;
     	private SimpleStringProperty num_articles;
+    	private SimpleStringProperty publisher;
     	private SimpleStringProperty pub_date;
     	private SimpleStringProperty genreName;
     	private SimpleStringProperty langName;
     	
-    	public Journal (String id, String title, String issue, String volume, String issn, String num_articles, String pub_date, String genreName, String langName) {
+    	public Journal (String id, String title, String issue, String volume, String issn, String num_articles, String publisher, String pub_date, String genreName, String langName) {
     		this.id = new SimpleStringProperty(id);
     		this.title = new SimpleStringProperty(title);
     		this.issue = new SimpleStringProperty(issue);
     		this.volume = new SimpleStringProperty(volume);
     		this.issn = new SimpleStringProperty(issn);
     		this.num_articles = new SimpleStringProperty(num_articles);
+    		this.publisher = new SimpleStringProperty(publisher);
     		this.pub_date = new SimpleStringProperty(pub_date);
     		this.genreName = new SimpleStringProperty(genreName);
     		this.langName = new SimpleStringProperty(langName);
@@ -233,10 +241,13 @@ public class JournalSearch extends Application {
 			return volume.get();
 		}
 		public String getIssn() {
-			return issn.get();
+			return String.format("%08d", issn.get());
 		}
 		public String getNum_articles() {
 			return num_articles.get();
+		}
+		public String getPublisher() {
+			return publisher.get();
 		}
 		public String getPub_date() {
 			return pub_date.get();
