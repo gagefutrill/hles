@@ -6,7 +6,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -14,12 +16,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 
 public class JournalSearch extends Application {
 
@@ -89,10 +93,21 @@ public class JournalSearch extends Application {
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
         table.getColumns().addAll(idCol,titleCol,issueCol,volumeCol,issnCol,numArtCol,pubCol,pubDateCol,genreCol,langCol);
         
-        // Create search button
-        Button searchButton = new Button("Search");
+        titleCol.setCellFactory(tc -> {
+            TableCell<Journal, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(titleCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
         
-     // Create layout
+        // Create search and back buttons
+        Button searchButton = new Button("Search");
+        Button backButton = new Button("Back");
+        
+        // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -125,14 +140,14 @@ public class JournalSearch extends Application {
         
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().add(searchButton);
+        hbox.getChildren().addAll(searchButton,backButton);
 
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.getChildren().addAll(grid, hbox);
 
         // Set scene and show window
-        Scene scene = new Scene(vbox, 800, 400);
+        Scene scene = new Scene(vbox, 400, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
         //primaryStage.setMaximized(true);
@@ -202,7 +217,14 @@ public class JournalSearch extends Application {
             }
         });
 
-        
+        backButton.setOnAction(click -> {
+        	SearchMenu searchMenu = new SearchMenu(url,user,pass);
+        	try {
+				searchMenu.start(primaryStage);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+        });
     }
     public static class Journal {
     	private SimpleStringProperty id;

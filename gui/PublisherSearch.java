@@ -36,7 +36,7 @@ public class PublisherSearch extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-    	// Set Window Titleand create connection
+    	// Set Window Title and create connection
         primaryStage.setTitle("Search Publishers");
         conn = DriverManager.getConnection(url, user, pass);
 
@@ -53,8 +53,10 @@ public class PublisherSearch extends Application {
         operatorDropdown.getItems().addAll("AND", "OR");
         operatorDropdown.setValue("AND");
 
-        // Create search button
+        // Create search and back buttons
         Button searchButton = new Button("Search");
+        Button backButton = new Button("Back");
+        
         // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -70,7 +72,7 @@ public class PublisherSearch extends Application {
 
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.TOP_CENTER);
-        hbox.getChildren().add(searchButton);
+        hbox.getChildren().addAll(searchButton,backButton);
 
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.TOP_CENTER);
@@ -121,7 +123,6 @@ public class PublisherSearch extends Application {
                 	int idResult = rs.getInt("publisher_id");
                     String nameResult = rs.getString("name");
                     String locationResult = rs.getString("city");
-                    //System.out.println("Name: " + nameResult + " Location: " + locationResult);
                     publishers.add(new Publisher(idResult,nameResult,locationResult));
                 }
                 //Add table with results to the window
@@ -134,7 +135,15 @@ public class PublisherSearch extends Application {
             }
         });
 
-       
+        backButton.setOnAction(click -> {
+        	SearchMenu searchMenu = new SearchMenu(url,user,pass);
+        	try {
+				searchMenu.start(primaryStage);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+        });
+        
     }
     public static class Publisher {
     	private  SimpleIntegerProperty id;

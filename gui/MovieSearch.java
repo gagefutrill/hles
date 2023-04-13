@@ -64,6 +64,7 @@ public class MovieSearch extends Application {
 
         // Create search button
         Button searchButton = new Button("Search");
+        Button backButton = new Button("Back");
         
         //Create Table and its columns
         TableView<Movie> table = new TableView<>();
@@ -117,7 +118,7 @@ public class MovieSearch extends Application {
 
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().add(searchButton);
+        hbox.getChildren().addAll(searchButton,backButton);
 
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.TOP_LEFT);
@@ -191,7 +192,14 @@ public class MovieSearch extends Application {
             }
         });
 
-        
+        backButton.setOnAction(click -> {
+        	SearchMenu searchMenu = new SearchMenu(url,user,pass);
+        	try {
+				searchMenu.start(primaryStage);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+        });
     }
     public static class Movie {
     	private SimpleStringProperty id;

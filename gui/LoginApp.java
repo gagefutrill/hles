@@ -57,17 +57,15 @@ public class LoginApp extends Application {
         
         // Event handler for the login button
         btn.setOnAction(event -> {
-            //USER = userTextField.getText();
-            //PASS = passwordField.getText();
-        	//USER="Ryan";
-            //PASS="ryan.clements";
+            USER = userTextField.getText();
+            PASS = passwordField.getText();
 
             // Authenticate the user against the database
             try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)){
                 message.setText("Your login was successfull");
                 //Create and open instance of Search Menu
                 SearchMenu searchMenu = new SearchMenu(DB_URL,USER,PASS);
-                primaryStage.close();
+                //primaryStage.close();
                 searchMenu.start(primaryStage);
                 
             } catch (SQLException e) {
@@ -76,7 +74,7 @@ public class LoginApp extends Application {
             }
         });
         
-        Scene scene = new Scene(grid, 600, 275);
+        Scene scene = new Scene(grid, 600, 350);
         primaryStage.setScene(scene);
         primaryStage.show();
         //primaryStage.setMaximized(true);
