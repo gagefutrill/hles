@@ -63,8 +63,12 @@ public class BookSearch extends Application {
         
         Label langLabel = new Label("Language:");
         TextField langField = new TextField();
-		
-        //Create Table and Columns
+		        
+        //Create search and back buttons
+        Button searchButton = new Button("Search");
+        Button backButton = new Button("Back");
+        
+      //Create Table and Columns
         TableView<Book> table = new TableView<>();
         table.setEditable(false);
         table.setPrefSize(400, 400);
@@ -72,17 +76,17 @@ public class BookSearch extends Application {
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Book,String> titleCol = new TableColumn<>("Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleCol.setMaxWidth(300); titleCol.setPrefWidth(200);
+        titleCol.setPrefWidth(200);
         TableColumn<Book,String> editionCol = new TableColumn<>("Edition");
         editionCol.setCellValueFactory(new PropertyValueFactory<>("edition"));
         TableColumn<Book,String> ISBNCol = new TableColumn<>("ISBN");
         ISBNCol.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         TableColumn<Book,String> authorsCol = new TableColumn<>("Authors");
         authorsCol.setCellValueFactory(new PropertyValueFactory<>("authors"));
-        authorsCol.setMaxWidth(300);authorsCol.setPrefWidth(150);
+        authorsCol.setPrefWidth(150);
         TableColumn<Book,String> pubCol = new TableColumn<>("Publisher");
         pubCol.setCellValueFactory(new PropertyValueFactory<>("publisher"));
-        pubCol.setMaxWidth(300); pubCol.setPrefWidth(150);
+        pubCol.setPrefWidth(150);
         TableColumn<Book,String> pubYearCol = new TableColumn<>("Publish Year");
         pubYearCol.setCellValueFactory(new PropertyValueFactory<>("publish_year"));
         TableColumn<Book, String> genreCol = new TableColumn<>("Genre");
@@ -121,10 +125,6 @@ public class BookSearch extends Application {
             return cell ;
         });
         table.getColumns().addAll(idCol,titleCol,editionCol,ISBNCol,authorsCol,pubCol,pubYearCol,genreCol,langCol,availCol);
-        
-        //Create search and back buttons
-        Button searchButton = new Button("Search");
-        Button backButton = new Button("Back");
         
         //Create layout
         GridPane grid = new GridPane();
@@ -232,7 +232,6 @@ public class BookSearch extends Application {
         		System.out.println("Error executing query: " + ex.getMessage());
         	}
         });
-        
         backButton.setOnAction(click -> {
         	SearchMenu searchMenu = new SearchMenu(url,user,pass);
         	try {
@@ -244,16 +243,7 @@ public class BookSearch extends Application {
 	}
 	
 	public static class Book {
-		private SimpleStringProperty id;
-		private SimpleStringProperty title;
-    	private SimpleStringProperty edition;
-    	private SimpleStringProperty isbn;
-    	private SimpleStringProperty authors;
-    	private SimpleStringProperty publisher;
-    	private SimpleStringProperty publish_year;
-    	private SimpleStringProperty genreName;
-    	private SimpleStringProperty langName;
-    	private SimpleStringProperty available;
+		private SimpleStringProperty id, title, edition, isbn, authors, publisher, publish_year, genreName, langName, avail;
     	
 		public Book(String id, String title, String edition, String isbn, String authors, String publisherName, String publish_year, String genreName, String langName, String available) {
 			this.id = new SimpleStringProperty(id);
@@ -266,9 +256,9 @@ public class BookSearch extends Application {
 			this.genreName = new SimpleStringProperty(genreName);
 			this.langName = new SimpleStringProperty(langName);
 			if(available.equals("1"))
-				this.available = new SimpleStringProperty("Yes");
+				this.avail = new SimpleStringProperty("Yes");
 			else 
-				this.available = new SimpleStringProperty("No");
+				this.avail = new SimpleStringProperty("No");
 		}
 		public String getId() {
 			return id.get();
@@ -297,8 +287,8 @@ public class BookSearch extends Application {
 		public String getLangName() {
 			return langName.get();
 		}
-		public String getAvailable() {
-			return available.get();
+		public String getAvail() {
+			return avail.get();
 		}
 	}
 	

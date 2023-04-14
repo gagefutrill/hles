@@ -1,5 +1,4 @@
 import javafx.application.Application;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,7 +7,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -16,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -57,6 +59,40 @@ public class PublisherSearch extends Application {
         Button searchButton = new Button("Search");
         Button backButton = new Button("Back");
         
+        //Create table for output
+    	TableView<Publisher> table = new TableView<>();
+        table.setEditable(false);
+        table.setPrefSize(400, 400);
+        TableColumn<Publisher, String> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Publisher, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.setMaxWidth(300); nameColumn.setPrefWidth(150);
+        TableColumn<Publisher, String> locationColumn = new TableColumn<>("Location");
+        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+        locationColumn.setMaxWidth(300); locationColumn.setPrefWidth(150);
+        table.getColumns().addAll(idColumn,nameColumn, locationColumn);
+        
+      //Create text wrapping for large fields
+       nameColumn.setCellFactory(tc -> {
+            TableCell<Publisher, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(nameColumn.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
+       locationColumn.setCellFactory(tc -> {
+           TableCell<Publisher, String> cell = new TableCell<>();
+           Text text = new Text();
+           cell.setGraphic(text);
+           cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+           text.wrappingWidthProperty().bind(locationColumn.widthProperty());
+           text.textProperty().bind(cell.itemProperty());
+           return cell ;
+       });
+        
         // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -77,26 +113,17 @@ public class PublisherSearch extends Application {
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.getChildren().addAll(grid, hbox);
-
+        
         // Set scene and show window
         Scene scene = new Scene(vbox, 1000, 600);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.show();
+        
+     
+        
         //set Button Action
         searchButton.setOnAction(e -> {
-        	//Create table for output
-        	TableView<Publisher> table = new TableView<>();
-            table.setEditable(false);
-            table.setPrefSize(400, 400);
-            TableColumn<Publisher, String> idColumn = new TableColumn<>("ID");
-            idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-            TableColumn<Publisher, String> nameColumn = new TableColumn<>("Name");
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-            TableColumn<Publisher, String> locationColumn = new TableColumn<>("Location");
-            locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-            table.getColumns().addAll(idColumn,nameColumn, locationColumn);
-             
             // Get search parameters
             String name = nameField.getText();
             String city = locationField.getText();
@@ -120,7 +147,7 @@ public class PublisherSearch extends Application {
                 ObservableList<Publisher> publishers = FXCollections.observableArrayList();
                 //Add results to table
                 while (rs.next()) {
-                	int idResult = rs.getInt("publisher_id");
+                	String idResult = rs.getString("publisher_id");
                     String nameResult = rs.getString("name");
                     String locationResult = rs.getString("city");
                     publishers.add(new Publisher(idResult,nameResult,locationResult));
@@ -146,12 +173,10 @@ public class PublisherSearch extends Application {
         
     }
     public static class Publisher {
-    	private  SimpleIntegerProperty id;
-        private  SimpleStringProperty name;
-        private  SimpleStringProperty location;
+    	private  SimpleStringProperty id, name, location;
 
-        public Publisher(int id, String name, String location) {
-        	this.id = new SimpleIntegerProperty(id);
+        public Publisher(String id, String name, String location) {
+        	this.id = new SimpleStringProperty(id);
             this.name = new SimpleStringProperty(name);
             this.location = new SimpleStringProperty(location);
         }
@@ -163,7 +188,7 @@ public class PublisherSearch extends Application {
         public String getLocation() {
             return location.get();
         }
-        public int getId() {
+        public String getId() {
         	return id.get();
         }
     }

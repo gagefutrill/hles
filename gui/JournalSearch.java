@@ -75,6 +75,7 @@ public class JournalSearch extends Application {
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Journal, String> titleCol = new TableColumn<>("Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
+        titleCol.setMaxWidth(150);
         TableColumn<Journal, String> issueCol = new TableColumn<>("Issue");
         issueCol.setCellValueFactory(new PropertyValueFactory<>("issue"));
         TableColumn<Journal, String> volumeCol = new TableColumn<>("Volume");
@@ -85,6 +86,7 @@ public class JournalSearch extends Application {
         numArtCol.setCellValueFactory(new PropertyValueFactory<>("num_articles"));
         TableColumn<Journal, String> pubCol = new TableColumn<>("Publisher");
         pubCol.setCellValueFactory(new PropertyValueFactory<>("publisher"));
+        pubCol.setMaxWidth(150);
         TableColumn<Journal, String> pubDateCol = new TableColumn<>("Publish Date");
         pubDateCol.setCellValueFactory(new PropertyValueFactory<>("pub_date"));
         TableColumn<Journal, String> genreCol = new TableColumn<>("Genre");
@@ -93,12 +95,22 @@ public class JournalSearch extends Application {
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
         table.getColumns().addAll(idCol,titleCol,issueCol,volumeCol,issnCol,numArtCol,pubCol,pubDateCol,genreCol,langCol);
         
+        //Set text wrapping for larger fields
         titleCol.setCellFactory(tc -> {
             TableCell<Journal, String> cell = new TableCell<>();
             Text text = new Text();
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
             text.wrappingWidthProperty().bind(titleCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
+        pubCol.setCellFactory(tc -> {
+            TableCell<Journal, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(pubCol.widthProperty());
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
@@ -113,28 +125,20 @@ public class JournalSearch extends Application {
         grid.setHgap(10);
         grid.setVgap(30);
         grid.setPadding(new Insets(25, 25, 25, 25));
-        
         grid.add(titleLabel, 0, 0);
         grid.add(titleField, 1, 0);
-        
         grid.add(issueLabel, 2, 1);
         grid.add(issueField, 3, 1);
-
         grid.add(volumeLabel, 0, 1);
         grid.add(volumeField, 1, 1);
-        
         grid.add(issnLabel, 2, 0);
         grid.add(issnField, 3, 0);
-        
         grid.add(pubdateLabel, 2, 3);
         grid.add(pubdateField, 3, 3);
-        
         grid.add(pubLabel, 0, 3);
         grid.add(pubField, 1, 3);
-        
         grid.add(genreLabel, 0, 2);
         grid.add(genreField, 1, 2);
-        
         grid.add(langLabel, 2, 2);
         grid.add(langField, 3, 2);
         
@@ -167,11 +171,14 @@ public class JournalSearch extends Application {
       
 
             // Construct query
-            String query = "SELECT journal.journal_id, journal.title, journal.issue, journal.volume, journal.issn, journal.num_articles, publisher.name, journal.pub_date, genre.name, language.name FROM hles.journal "
+            String query = "SELECT journal.journal_id, journal.title, journal.issue, journal.volume, journal.issn, "
+            		+ "journal.num_articles, publisher.name, journal.pub_date, genre.name, language.name, copy_of.available "
+            		+ "FROM hles.journal "
             		+ "INNER JOIN genre ON journal.genre_id = genre.genre_id "
             		+ "INNER JOIN language ON journal.language_id = language.language_id "
             		+ "INNER JOIN publisher_of ON journal.journal_id = publisher_of.journal_id "
-            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id WHERE ";
+            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id "
+            		+ "INNER JOIN copy_of ON journal.journal_id = copy_of.journal_id WHERE ";
                    query += "journal.title LIKE ? AND journal.issue LIKE ? AND ";
                    query += "journal.volume LIKE ? AND journal.issn LIKE ? AND ";
                    query += "publisher.name LIKE ? AND journal.pub_date LIKE ? AND ";
@@ -184,10 +191,10 @@ public class JournalSearch extends Application {
                 stmt.setString(2, "%" + issue + "%");
                 stmt.setString(3, "%" + volume + "%");
                 stmt.setString(4, "%" + issn + "%");
-                stmt.setString(6, "%" + publisher + "%");
-                stmt.setString(7, "%" + pubDate + "%");
-                stmt.setString(8, "%" + genre + "%");
-                stmt.setString(9, "%" + language + "%");
+                stmt.setString(5, "%" + publisher + "%");
+                stmt.setString(6, "%" + pubDate + "%");
+                stmt.setString(7, "%" + genre + "%");
+                stmt.setString(8, "%" + language + "%");
                 
                 ResultSet rs = stmt.executeQuery();
                 
@@ -204,8 +211,9 @@ public class JournalSearch extends Application {
                     String pubdateResult = rs.getString("journal.pub_date");
                     String genreResult = rs.getString("genre.name");
                     String languageResult = rs.getString("language.name");
+                    String availResult = rs.getString("copy_of.available");
                     
-                    journals.add(new Journal(id,titleResult,issueResult,volumeResult,issnResult,numArtResult,pubResult,pubdateResult,genreResult,languageResult));
+                    journals.add(new Journal(id,titleResult,issueResult,volumeResult,issnResult,numArtResult,pubResult,pubdateResult,genreResult,languageResult,availResult));
                 }
                 //Remove any existing table and add new Results table to window
         		vbox.getChildren().remove(table);
@@ -227,18 +235,9 @@ public class JournalSearch extends Application {
         });
     }
     public static class Journal {
-    	private SimpleStringProperty id;
-    	private SimpleStringProperty title;
-    	private SimpleStringProperty issue;
-    	private SimpleStringProperty volume;
-    	private SimpleStringProperty issn;
-    	private SimpleStringProperty num_articles;
-    	private SimpleStringProperty publisher;
-    	private SimpleStringProperty pub_date;
-    	private SimpleStringProperty genreName;
-    	private SimpleStringProperty langName;
+    	private SimpleStringProperty id, title, issue, volume, issn, num_articles, publisher, pub_date, genreName, langName, avail;
     	
-    	public Journal (String id, String title, String issue, String volume, String issn, String num_articles, String publisher, String pub_date, String genreName, String langName) {
+    	public Journal (String id, String title, String issue, String volume, String issn, String num_articles, String publisher, String pub_date, String genreName, String langName, String avail) {
     		this.id = new SimpleStringProperty(id);
     		this.title = new SimpleStringProperty(title);
     		this.issue = new SimpleStringProperty(issue);
@@ -249,6 +248,10 @@ public class JournalSearch extends Application {
     		this.pub_date = new SimpleStringProperty(pub_date);
     		this.genreName = new SimpleStringProperty(genreName);
     		this.langName = new SimpleStringProperty(langName);
+    		if(avail.equals("1"))
+				this.avail = new SimpleStringProperty("Yes");
+			else 
+				this.avail = new SimpleStringProperty("No");
     	}
 		public String getId() {
 			return id.get();
@@ -263,7 +266,7 @@ public class JournalSearch extends Application {
 			return volume.get();
 		}
 		public String getIssn() {
-			return String.format("%08d", issn.get());
+			return String.format("%08d", Integer.parseInt(issn.get()));
 		}
 		public String getNum_articles() {
 			return num_articles.get();
@@ -279,6 +282,9 @@ public class JournalSearch extends Application {
 		}
 		public String getLangName() {
 			return langName.get();
+		}
+		public String getAvail() {
+			return avail.get();
 		}
     }
 }

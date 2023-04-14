@@ -88,8 +88,14 @@ public class SearchMenu extends Application {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        	
-        	
+        });
+        authorBtn.setOnAction(event -> {
+        	AuthorSearch authorSearch = new AuthorSearch(url,user,pass);
+        	try {
+				authorSearch.start(primaryStage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         });
     }
     

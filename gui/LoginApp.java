@@ -24,6 +24,7 @@ public class LoginApp extends Application {
     
     @Override
     public void start(Stage primaryStage) {
+    	
         primaryStage.setTitle("Library Database Login");
         
         // Create the login form
@@ -82,6 +83,8 @@ public class LoginApp extends Application {
     }
 
     public static void main(String[] args) {
+		
+
         launch(args);
     }
 }
