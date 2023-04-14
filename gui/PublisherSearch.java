@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -173,10 +174,11 @@ public class PublisherSearch extends Application {
         
     }
     public static class Publisher {
-    	private  SimpleStringProperty id, name, location;
+		private SimpleIntegerProperty id;
+    	private  SimpleStringProperty name, location;
 
         public Publisher(String id, String name, String location) {
-        	this.id = new SimpleStringProperty(id);
+        	this.id = new SimpleIntegerProperty(Integer.parseInt(id));
             this.name = new SimpleStringProperty(name);
             this.location = new SimpleStringProperty(location);
         }
@@ -188,7 +190,7 @@ public class PublisherSearch extends Application {
         public String getLocation() {
             return location.get();
         }
-        public String getId() {
+        public int getId() {
         	return id.get();
         }
     }

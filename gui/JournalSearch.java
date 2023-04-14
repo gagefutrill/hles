@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -75,7 +76,7 @@ public class JournalSearch extends Application {
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Journal, String> titleCol = new TableColumn<>("Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleCol.setMaxWidth(150);
+        titleCol.setPrefWidth(150);
         TableColumn<Journal, String> issueCol = new TableColumn<>("Issue");
         issueCol.setCellValueFactory(new PropertyValueFactory<>("issue"));
         TableColumn<Journal, String> volumeCol = new TableColumn<>("Volume");
@@ -86,14 +87,16 @@ public class JournalSearch extends Application {
         numArtCol.setCellValueFactory(new PropertyValueFactory<>("num_articles"));
         TableColumn<Journal, String> pubCol = new TableColumn<>("Publisher");
         pubCol.setCellValueFactory(new PropertyValueFactory<>("publisher"));
-        pubCol.setMaxWidth(150);
+        pubCol.setPrefWidth(150);
         TableColumn<Journal, String> pubDateCol = new TableColumn<>("Publish Date");
         pubDateCol.setCellValueFactory(new PropertyValueFactory<>("pub_date"));
         TableColumn<Journal, String> genreCol = new TableColumn<>("Genre");
         genreCol.setCellValueFactory(new PropertyValueFactory<>("genreName"));
         TableColumn<Journal, String> langCol = new TableColumn<>("Language");
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
-        table.getColumns().addAll(idCol,titleCol,issueCol,volumeCol,issnCol,numArtCol,pubCol,pubDateCol,genreCol,langCol);
+        TableColumn<Journal, String> availCol = new TableColumn<>("Available");
+        availCol.setCellValueFactory(new PropertyValueFactory<>("avail"));
+        table.getColumns().addAll(idCol,titleCol,issueCol,volumeCol,issnCol,numArtCol,pubCol,pubDateCol,genreCol,langCol,availCol);
         
         //Set text wrapping for larger fields
         titleCol.setCellFactory(tc -> {
@@ -127,20 +130,20 @@ public class JournalSearch extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
         grid.add(titleLabel, 0, 0);
         grid.add(titleField, 1, 0);
-        grid.add(issueLabel, 2, 1);
-        grid.add(issueField, 3, 1);
-        grid.add(volumeLabel, 0, 1);
-        grid.add(volumeField, 1, 1);
         grid.add(issnLabel, 2, 0);
         grid.add(issnField, 3, 0);
-        grid.add(pubdateLabel, 2, 3);
-        grid.add(pubdateField, 3, 3);
-        grid.add(pubLabel, 0, 3);
-        grid.add(pubField, 1, 3);
+        grid.add(volumeLabel, 0, 1);
+        grid.add(volumeField, 1, 1);
+        grid.add(issueLabel, 2, 1);
+        grid.add(issueField, 3, 1);
         grid.add(genreLabel, 0, 2);
         grid.add(genreField, 1, 2);
         grid.add(langLabel, 2, 2);
         grid.add(langField, 3, 2);
+        grid.add(pubLabel, 0, 3);
+        grid.add(pubField, 1, 3);
+        grid.add(pubdateLabel, 2, 3);
+        grid.add(pubdateField, 3, 3);
         
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
@@ -235,10 +238,11 @@ public class JournalSearch extends Application {
         });
     }
     public static class Journal {
-    	private SimpleStringProperty id, title, issue, volume, issn, num_articles, publisher, pub_date, genreName, langName, avail;
+		private SimpleIntegerProperty id;
+    	private SimpleStringProperty title, issue, volume, issn, num_articles, publisher, pub_date, genreName, langName, avail;
     	
     	public Journal (String id, String title, String issue, String volume, String issn, String num_articles, String publisher, String pub_date, String genreName, String langName, String avail) {
-    		this.id = new SimpleStringProperty(id);
+    		this.id = new SimpleIntegerProperty(Integer.parseInt(id));
     		this.title = new SimpleStringProperty(title);
     		this.issue = new SimpleStringProperty(issue);
     		this.volume = new SimpleStringProperty(volume);
@@ -253,7 +257,7 @@ public class JournalSearch extends Application {
 			else 
 				this.avail = new SimpleStringProperty("No");
     	}
-		public String getId() {
+		public int getId() {
 			return id.get();
 		}
 		public String getTitle() {

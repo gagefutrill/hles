@@ -25,43 +25,38 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class BookSearch extends Application {
+public class ArticleSearch extends Application{
+
 	private Connection conn;
-	private String user, pass, url;
+	private String url,user,pass;
 	
-	public BookSearch(String url, String user, String pass) {
+	public ArticleSearch(String url, String user, String pass) {
 		this.url = url;
-		this.pass = pass;
 		this.user = user;
+		this.pass = pass;
 	}
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Search Books");
+		primaryStage.setTitle("Search Articles");
 		conn = DriverManager.getConnection(url,user,pass);
 		
 		// Create labels and text fields for searching
         Label titleLabel = new Label("Title:");
         TextField titleField = new TextField();
-
-        Label editionLabel = new Label("Edition:");
-        TextField editionField = new TextField();
-        
-        Label isbnLabel = new Label("ISBN:");
-        TextField isbnField = new TextField();
+        Label doiLabel = new Label("doi:");
+        TextField doiField = new TextField();
         
         Label authorLabel = new Label("Authors:");
         TextField authorField = new TextField();
+        Label journalLabel = new Label("Journal: ");
+        TextField journalField = new TextField();
         
-        Label pubLabel = new Label("Publsher: ");
-        TextField pubField = new TextField();
-        
-        Label pubYearLabel = new Label("Publish Date:");
-        TextField pubYearField = new TextField();
+        Label pubDateLabel = new Label("Publish Date:");
+        TextField pubDateField = new TextField();
         
         Label genreLabel = new Label("Genre:");
         TextField genreField = new TextField();
-        
         Label langLabel = new Label("Language:");
         TextField langField = new TextField();
 		        
@@ -70,36 +65,35 @@ public class BookSearch extends Application {
         Button backButton = new Button("Back");
         
       //Create Table and Columns
-        TableView<Book> table = new TableView<>();
+        TableView<Article> table = new TableView<>();
         table.setEditable(false);
         table.setPrefSize(400, 400);
-        TableColumn<Book,String> idCol = new TableColumn<>("ID");
+        TableColumn<Article,String> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        TableColumn<Book,String> titleCol = new TableColumn<>("Title");
+        TableColumn<Article,String> titleCol = new TableColumn<>("Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         titleCol.setPrefWidth(200);
-        TableColumn<Book,String> editionCol = new TableColumn<>("Edition");
-        editionCol.setCellValueFactory(new PropertyValueFactory<>("edition"));
-        TableColumn<Book,String> ISBNCol = new TableColumn<>("ISBN");
-        ISBNCol.setCellValueFactory(new PropertyValueFactory<>("isbn"));
-        TableColumn<Book,String> authorsCol = new TableColumn<>("Authors");
+        TableColumn<Article,String> doiCol = new TableColumn<>("DOI");
+        doiCol.setCellValueFactory(new PropertyValueFactory<>("doi"));
+        TableColumn<Article,String> authorsCol = new TableColumn<>("Authors");
         authorsCol.setCellValueFactory(new PropertyValueFactory<>("authors"));
         authorsCol.setPrefWidth(150);
-        TableColumn<Book,String> pubCol = new TableColumn<>("Publisher");
-        pubCol.setCellValueFactory(new PropertyValueFactory<>("publisher"));
-        pubCol.setPrefWidth(150);
-        TableColumn<Book,String> pubYearCol = new TableColumn<>("Publish Year");
-        pubYearCol.setCellValueFactory(new PropertyValueFactory<>("publish_year"));
-        TableColumn<Book, String> genreCol = new TableColumn<>("Genre");
+        TableColumn<Article,String> journalCol = new TableColumn<>("Journal");
+        journalCol.setCellValueFactory(new PropertyValueFactory<>("journal"));
+        journalCol.setPrefWidth(150);
+        TableColumn<Article,String> pubYearCol = new TableColumn<>("Publish Date");
+        pubYearCol.setCellValueFactory(new PropertyValueFactory<>("publish_date"));
+        TableColumn<Article, String> genreCol = new TableColumn<>("Genre");
         genreCol.setCellValueFactory(new PropertyValueFactory<>("genreName"));
-        TableColumn<Book, String> langCol = new TableColumn<>("Language");
+        TableColumn<Article, String> langCol = new TableColumn<>("Language");
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
-        TableColumn<Book,String> availCol = new TableColumn<>("Available");
+        TableColumn<Article,String> availCol = new TableColumn<>("Available");
         availCol.setCellValueFactory(new PropertyValueFactory<>("avail"));
-        
+        table.getColumns().addAll(idCol,titleCol,doiCol,authorsCol,journalCol,pubYearCol,genreCol,langCol,availCol);
+
         //Create text wrapping for large fields
         titleCol.setCellFactory(tc -> {
-            TableCell<Book, String> cell = new TableCell<>();
+            TableCell<Article, String> cell = new TableCell<>();
             Text text = new Text();
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
@@ -108,7 +102,7 @@ public class BookSearch extends Application {
             return cell ;
         });
         authorsCol.setCellFactory(tc -> {
-            TableCell<Book, String> cell = new TableCell<>();
+            TableCell<Article, String> cell = new TableCell<>();
             Text text = new Text();
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
@@ -116,16 +110,15 @@ public class BookSearch extends Application {
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
-        pubCol.setCellFactory(tc -> {
-            TableCell<Book, String> cell = new TableCell<>();
+        journalCol.setCellFactory(tc -> {
+            TableCell<Article, String> cell = new TableCell<>();
             Text text = new Text();
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-            text.wrappingWidthProperty().bind(pubCol.widthProperty());
+            text.wrappingWidthProperty().bind(journalCol.widthProperty());
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
-        table.getColumns().addAll(idCol,titleCol,editionCol,ISBNCol,authorsCol,pubCol,pubYearCol,genreCol,langCol,availCol);
         
         //Create layout
         GridPane grid = new GridPane();
@@ -136,23 +129,21 @@ public class BookSearch extends Application {
         
         grid.add(titleLabel, 0, 0);
         grid.add(titleField, 1, 0);
-        grid.add(editionLabel, 2, 0);
-        grid.add(editionField, 3, 0);
+        grid.add(doiLabel, 2, 0);
+        grid.add(doiField, 3, 0);
         
-        grid.add(isbnLabel, 0, 1);
-        grid.add(isbnField, 1, 1);
+        grid.add(journalLabel,0,1);
+        grid.add(journalField, 1, 1);
         grid.add(authorLabel, 2, 1);
         grid.add(authorField, 3, 1);
         
-        grid.add(pubLabel,0,2);
-        grid.add(pubField, 1, 2);
-        grid.add(pubYearLabel, 2, 2);
-        grid.add(pubYearField, 3, 2);
+        grid.add(pubDateLabel, 0, 3);
+        grid.add(pubDateField, 1, 3);
         
-        grid.add(genreLabel, 0, 3);
-        grid.add(genreField, 1, 3);
-        grid.add(langLabel, 2, 3);
-        grid.add(langField, 3, 3);
+        grid.add(genreLabel, 0, 2);
+        grid.add(genreField, 1, 2);
+        grid.add(langLabel, 2, 2);
+        grid.add(langField, 3, 2);
         
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
@@ -172,50 +163,47 @@ public class BookSearch extends Application {
         searchButton.setOnAction(e -> {
         	//Get search parameters
         	String title = titleField.getText();
-        	String edition = editionField.getText();
-        	String isbn = isbnField.getText();
-        	String author = authorField.getText();
-        	String pub = pubField.getText();
-        	String pubYear = pubYearField.getText();
+        	String doi = doiField.getText();
+        	String authors = authorField.getText();
+        	String journal = journalField.getText();
+        	String pubDate = pubDateField.getText();
         	String genre = genreField.getText();
         	String lang = langField.getText();
         	
         	//Construct query 
-        	String query = "SELECT book.book_id,book.title,book.edition,book.isbn, GROUP_CONCAT(author.name ORDER BY author.name DESC SEPARATOR ', '),"
-        			+ 	   "publisher.name,book.publish_year,genre.name,language.name,copy_of.available "
-        			+ "FROM book "
-        			+ "INNER Join author_of ON book.book_id = author_of.book_id "
+        	String query = "SELECT article.article_id,article.title,article.doi, GROUP_CONCAT(author.name ORDER BY author.name DESC SEPARATOR ', ') AS 'authors',"
+        			+ 	   "journal.title,article.publish_date,genre.name,language.name,copy_of.available "
+        			+ "FROM article "
+        			+ "INNER Join author_of ON article.article_id = author_of.article_id "
         			+ "INNER join author ON author_of.author_id = author.author_id "
-        			+ "INNER JOIN genre ON book.genre_id = genre.genre_id "
-            		+ "INNER JOIN language ON book.language_id = language.language_id "
-            		+ "INNER JOIN publisher_of ON book.book_id = publisher_of.book_id "
-            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id "
-            		+ "INNER JOIN copy_of ON book.book_id = copy_of.book_id WHERE "
-            		+ "book.title LIKE ? AND book.edition LIKE ? AND book.isbn LIKE ? AND author.name LIKE ? AND "
-            		+ "publisher.name LIKE ? AND book.publish_year LIKE ? AND genre.name LIKE ? AND language.name LIKE ? "
-        			+ "Group by book.book_id,book.title,book.edition,book.isbn,publisher.name,book.publish_year,genre.name,language.name,copy_of.available ; ";
+        			+ "INNER JOIN genre ON article.genre_id = genre.genre_id "
+            		+ "INNER JOIN language ON article.language_id = language.language_id "
+            		+ "INNER JOIN article_in ON article.article_id = article_in.article_id "
+            		+ "INNER JOIN journal ON article_in.journal_id = journal.journal_id "
+            		+ "INNER JOIN copy_of ON journal.journal_id = copy_of.journal_id WHERE "
+            		+ "article.title LIKE ? AND article.doi LIKE ? AND author.name LIKE ? AND "
+            		+ "journal.title LIKE ?  AND genre.name LIKE ? AND language.name LIKE ? AND article.publish_date LIKE ? "
+        			+ "GROUP BY article.article_id,article.title,article.doi,journal.title,article.publish_date,genre.name,language.name,copy_of.available;";
         	
         	try { 
         		//Execute query
         		PreparedStatement stmt = conn.prepareStatement(query);
         		stmt.setString(1, "%"+title+"%");
-        		stmt.setString(2, "%"+edition+"%");
-        		stmt.setString(3, "%"+isbn+"%");
-        		stmt.setString(4, "%"+author+"%");
-        		stmt.setString(5, "%"+pub+"%");
-        		stmt.setString(6, "%"+pubYear+"%");
-        		stmt.setString(7, "%"+genre+"%");
-        		stmt.setString(8, "%"+lang+"%");
+        		stmt.setString(2, "%"+doi+"%");
+        		stmt.setString(3, "%"+authors+"%");
+        		stmt.setString(4, "%"+journal+"%");
+        		stmt.setString(7, "%"+pubDate+"%");
+        		stmt.setString(5, "%"+genre+"%");
+        		stmt.setString(6, "%"+lang+"%");
         		ResultSet rs = stmt.executeQuery();
         		
-        		ObservableList<Book> books = FXCollections.observableArrayList();
-        		String[] cols = {"book.book_id","book.title","book.edition","book.isbn",
-        				"GROUP_CONCAT(author.name ORDER BY author.name DESC SEPARATOR ', ')",
-        				"publisher.name","book.publish_year","genre.name","language.name","copy_of.available"};
-        		String[] res = new String[10];
+        		ObservableList<Article> articles = FXCollections.observableArrayList();
+        		String[] cols = {"article.article_id","article.title","article.doi","authors",
+        				"journal.title","article.publish_date","genre.name","language.name","copy_of.available"};
+        		String[] res = new String[9];
         		//Display results in Table
         		while(rs.next()) {
-        			for(int i = 0; i < 10; i++){
+        			for(int i = 0; i < 9; i++){
         		        if(rs.getObject(i+1)!=null) {
         		        	res[i] = rs.getString(cols[i]);
         		        }
@@ -223,14 +211,15 @@ public class BookSearch extends Application {
         		        	res[i] = " ";
         		        }
         		    }      			
-            		books.add(new Book(res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7],res[8],res[9]));
+            		articles.add(new Article(res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7],res[8]));
         		}
         		//Remove any existing table and add new Results table to window
         		vbox.getChildren().remove(table);
         		vbox.getChildren().addAll(table);
-        		table.setItems(books);
+        		table.setItems(articles);
         	} catch (SQLException ex) {
         		System.out.println("Error executing query: " + ex.getMessage());
+        		ex.printStackTrace();
         	}
         });
         backButton.setOnAction(click -> {
@@ -243,18 +232,17 @@ public class BookSearch extends Application {
         });
 	}
 	
-	public static class Book {
+	public static class Article {
 		private SimpleIntegerProperty id;
-		private SimpleStringProperty title, edition, isbn, authors, publisher, publish_year, genreName, langName, avail;
+		private SimpleStringProperty title, doi, authors, journal, publish_date, genreName, langName, avail;
     	
-		public Book(String id, String title, String edition, String isbn, String authors, String publisherName, String publish_year, String genreName, String langName, String available) {
+		public Article(String id, String title, String doi, String authors, String journal, String publish_date, String genreName, String langName, String available) {
 			this.id = new SimpleIntegerProperty(Integer.parseInt(id));
 			this.title = new SimpleStringProperty(title);
-			this.edition = new SimpleStringProperty(edition);
-			this.isbn = new SimpleStringProperty(isbn);
+			this.doi = new SimpleStringProperty(doi);
 			this.authors = new SimpleStringProperty(authors);
-			this.publisher = new SimpleStringProperty(publisherName);
-			this.publish_year = new SimpleStringProperty(publish_year);
+			this.journal = new SimpleStringProperty(journal);
+			this.publish_date = new SimpleStringProperty(publish_date);
 			this.genreName = new SimpleStringProperty(genreName);
 			this.langName = new SimpleStringProperty(langName);
 			if(available.equals("1"))
@@ -268,20 +256,17 @@ public class BookSearch extends Application {
 		public String getTitle() {
 			return title.get();
 		}
-		public String getEdition() {
-			return edition.get();
-		}
-		public String getIsbn() {
-			return isbn.get();
+		public String getDoi() {
+			return doi.get();
 		}
 		public String getAuthors() {
 			return authors.get();
 		}
-		public String getPublisher() {
-			return publisher.get();
+		public String getJournal() {
+			return journal.get();
 		}
-		public String getPublish_year() {
-			return publish_year.get();
+		public String getPublish_date() {
+			return publish_date.get();
 		}
 		public String getGenreName() {
 			return genreName.get();

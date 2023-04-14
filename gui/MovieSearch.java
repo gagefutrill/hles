@@ -1,5 +1,6 @@
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -185,7 +186,7 @@ public class MovieSearch extends Application {
             		+ "INNER JOIN language ON movie.language_id = language.language_id "
             		+ "INNER JOIN publisher_of ON movie.movie_id = publisher_of.movie_id "
             		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id "
-            		+ "INNER JOIN copy_of ON book.book_id = copy_of.movie_id WHERE ";
+            		+ "INNER JOIN copy_of ON movie.movie_id = copy_of.movie_id WHERE ";
                    query += "movie.title LIKE ? AND movie.edition LIKE ? AND ";
                    query += "movie.director LIKE ? AND movie.isbn LIKE ? AND publisher.name LIKE ? AND ";
                    query += "movie.publish_date LIKE ? AND genre.name LIKE ? AND language.name LIKE ?";
@@ -241,10 +242,11 @@ public class MovieSearch extends Application {
         });
     }
     public static class Movie {
-    	private SimpleStringProperty id, title, edition, director, isbn, publisher, publish_date, genreName, langName, avail;
+		private SimpleIntegerProperty id;
+		private SimpleStringProperty title, edition, director, isbn, publisher, publish_date, genreName, langName, avail;
     	
     	public Movie (String id, String title, String edition, String director, String isbn, String publisher, String pub_date, String genreName, String langName, String avail) {
-    		this.id = new SimpleStringProperty(id);
+    		this.id = new SimpleIntegerProperty(Integer.parseInt(id));
     		this.title = new SimpleStringProperty(title);
     		this.edition = new SimpleStringProperty(edition);
     		this.director = new SimpleStringProperty(director);
@@ -258,7 +260,7 @@ public class MovieSearch extends Application {
 			else 
 				this.avail = new SimpleStringProperty("No");
     	}
-		public String getId() {
+		public int getId() {
 			return id.get();
 		}
 		public String getTitle() {

@@ -49,7 +49,7 @@ public class SearchMenu extends Application {
         vbox.getChildren().addAll(publisherBtn, authorBtn, journalBtn, articleBtn, bookBtn, movieBtn);
         
         // Create a scene with the VBox and set it as the scene for the window
-        Scene scene = new Scene(vbox, 220, 350);
+        Scene scene = new Scene(vbox, 400, 400);
         primaryStage.setScene(scene);
         
         // Show the maximized window
@@ -93,6 +93,14 @@ public class SearchMenu extends Application {
         	AuthorSearch authorSearch = new AuthorSearch(url,user,pass);
         	try {
 				authorSearch.start(primaryStage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        });
+        articleBtn.setOnAction(click -> {
+        	ArticleSearch articleSearch = new ArticleSearch(url,user,pass);
+        	try {
+				articleSearch.start(primaryStage);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

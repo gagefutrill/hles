@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Year;
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -167,8 +168,8 @@ public class AuthorSearch extends Application{
 					stmt.setString(4, "-2000");
 					stmt.setString(5, Integer.toString(Year.now().getValue()));
 				}else {
-					stmt.setString(4, "%"+birthYearMin+"%");
-					stmt.setString(5, "%"+birthYearMax+"%");
+					stmt.setString(4, ""+birthYearMin+"");
+					stmt.setString(5, ""+birthYearMax+"");
 				}
 				
 				ResultSet rs = stmt.executeQuery();
@@ -211,10 +212,11 @@ public class AuthorSearch extends Application{
         });
 	}
 	public static class Author {
-		private SimpleStringProperty id, name, gender, race, birthYear, books, journals;
+		private SimpleIntegerProperty id;
+		private SimpleStringProperty name, gender, race, birthYear, books, journals;
 
 		public Author(String id, String name, String gender, String race, String birthYear, String books, String journals) {
-			this.id = new SimpleStringProperty(id);
+			this.id = new SimpleIntegerProperty(Integer.parseInt(id));
 			this.name = new SimpleStringProperty(name);
 			this.gender = new SimpleStringProperty(gender);
 			this.race = new SimpleStringProperty(race);
@@ -222,7 +224,7 @@ public class AuthorSearch extends Application{
 			this.books = new SimpleStringProperty(books);
 			this.journals = new SimpleStringProperty(journals);
 		}
-		public String getId() {
+		public int getId() {
 			return id.get();
 		}
 		public String getName() {
