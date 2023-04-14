@@ -137,12 +137,12 @@ public class MovieSearch extends Application {
         
         grid.add(titleLabel, 0, 0);
         grid.add(titleField, 1, 0);
-        grid.add(editionLabel, 2, 1);
-        grid.add(editionField, 3, 1);
-        grid.add(directorLabel, 0, 1);
-        grid.add(directorField, 1, 1);
         grid.add(isbnLabel, 2, 0);
         grid.add(isbnField, 3, 0);
+        grid.add(directorLabel, 0, 1);
+        grid.add(directorField, 1, 1);
+        grid.add(editionLabel, 2, 1);
+        grid.add(editionField, 3, 1);
         grid.add(pubLabel, 0, 3);
         grid.add(pubField, 1, 3);
         grid.add(pubYearLabel, 2, 3);

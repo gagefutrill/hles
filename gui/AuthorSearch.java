@@ -117,14 +117,14 @@ public class AuthorSearch extends Application{
         grid.setPadding(new Insets(25, 25, 25, 25));
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
-        grid.add(birthYearLabel,0,1);
-        grid.add(birthYearMinField, 1, 1);
-        grid.add(birthDash, 2, 1);
-        grid.add(birthYearMaxField,3,1);
         grid.add(genderLabel, 2, 0);
         grid.add(genderField, 3, 0);
         grid.add(raceLabel, 4, 0);
         grid.add(raceField, 5, 0);
+        grid.add(birthYearLabel,0,1);
+        grid.add(birthYearMinField, 1, 1);
+        grid.add(birthDash, 2, 1);
+        grid.add(birthYearMaxField,3,1);
         
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.TOP_CENTER);

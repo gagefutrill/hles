@@ -131,19 +131,16 @@ public class ArticleSearch extends Application{
         grid.add(titleField, 1, 0);
         grid.add(doiLabel, 2, 0);
         grid.add(doiField, 3, 0);
-        
         grid.add(journalLabel,0,1);
         grid.add(journalField, 1, 1);
         grid.add(authorLabel, 2, 1);
         grid.add(authorField, 3, 1);
-        
-        grid.add(pubDateLabel, 0, 3);
-        grid.add(pubDateField, 1, 3);
-        
         grid.add(genreLabel, 0, 2);
         grid.add(genreField, 1, 2);
         grid.add(langLabel, 2, 2);
         grid.add(langField, 3, 2);
+        grid.add(pubDateLabel, 0, 3);
+        grid.add(pubDateField, 1, 3);
         
         HBox hbox = new HBox(10);
         hbox.setAlignment(Pos.CENTER);
