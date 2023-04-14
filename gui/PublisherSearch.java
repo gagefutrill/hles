@@ -131,7 +131,7 @@ public class PublisherSearch extends Application {
             String operator = operatorDropdown.getValue();
 
             // Construct query
-            String query = "SELECT publisher_id,name, city FROM hles.publisher WHERE ";
+            String query = "SELECT publisher_id,name, city FROM hles.Publisher WHERE ";
             if (operator.equals("AND")) {
                 query += "name LIKE ? AND city LIKE ?";
             } else {

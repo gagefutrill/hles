@@ -181,19 +181,19 @@ public class BookSearch extends Application {
         	String lang = langField.getText();
         	
         	//Construct query 
-        	String query = "SELECT book.book_id,book.title,book.edition,book.isbn, GROUP_CONCAT(author.name ORDER BY author.name DESC SEPARATOR ', '),"
-        			+ 	   "publisher.name,book.publish_year,genre.name,language.name,copy_of.available "
-        			+ "FROM book "
-        			+ "INNER Join author_of ON book.book_id = author_of.book_id "
-        			+ "INNER join author ON author_of.author_id = author.author_id "
-        			+ "INNER JOIN genre ON book.genre_id = genre.genre_id "
-            		+ "INNER JOIN language ON book.language_id = language.language_id "
-            		+ "INNER JOIN publisher_of ON book.book_id = publisher_of.book_id "
-            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id "
-            		+ "INNER JOIN copy_of ON book.book_id = copy_of.book_id WHERE "
-            		+ "book.title LIKE ? AND book.edition LIKE ? AND book.isbn LIKE ? AND author.name LIKE ? AND "
-            		+ "publisher.name LIKE ? AND book.publish_year LIKE ? AND genre.name LIKE ? AND language.name LIKE ? "
-        			+ "Group by book.book_id,book.title,book.edition,book.isbn,publisher.name,book.publish_year,genre.name,language.name,copy_of.available ; ";
+        	String query = "SELECT Book.book_id,Book.title,Book.edition,Book.isbn, GROUP_CONCAT(Author.name ORDER BY Author.name DESC SEPARATOR ', '),"
+        			+ 	   "Publisher.name,Book.publish_year,Genre.name,Language.name,Copy_of.available "
+        			+ "FROM hles.Book "
+        			+ "INNER Join Author_of ON Book.book_id = Author_of.book_id "
+        			+ "INNER join Author ON Author_of.author_id = Author.author_id "
+        			+ "INNER JOIN Genre ON Book.genre_id = Genre.genre_id "
+            		+ "INNER JOIN Language ON book.Language_id = Language.Language_id "
+            		+ "INNER JOIN Publisher_of ON Book.book_id = Publisher_of.book_id "
+            		+ "INNER JOIN Publisher ON Publisher_of.publisher_id = Publisher.publisher_id "
+            		+ "INNER JOIN Copy_of ON Book.book_id = Copy_of.book_id WHERE "
+            		+ "Book.title LIKE ? AND Book.edition LIKE ? AND Book.isbn LIKE ? AND Author.name LIKE ? AND "
+            		+ "Publisher.name LIKE ? AND Book.publish_year LIKE ? AND Genre.name LIKE ? AND Language.name LIKE ? "
+        			+ "Group by Book.book_id,Book.title,Book.edition,Book.isbn,Publisher.name,Book.publish_year,genre.name,Language.name,Copy_of.available ; ";
         	
         	try { 
         		//Execute query

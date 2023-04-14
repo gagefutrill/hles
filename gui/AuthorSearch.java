@@ -149,14 +149,14 @@ public class AuthorSearch extends Application{
         	String birthYearMax = birthYearMaxField.getText();
         	
         	//Construct query
-        	String query = "SELECT author.author_id, author.name, author.gender, author.race, author.birth_year, GROUP_CONCAT(book.title ORDER BY book.title DESC SEPARATOR ', ') AS 'books', "
-        			+ " GROUP_CONCAT(article.title ORDER BY article.title DESC SEPARATOR ', ') AS 'journals' "
-        			+ "from author "
-        			+ "LEFT JOIN author_of ON author.author_id = author_of.author_id "
-        			+ "LEFT JOIN book ON author_of.book_id = book.book_id "
-        			+ "LEFT JOIN article ON author_of.article_id = article.article_id WHERE "
-        			+ "author.name LIKE ? AND author.gender LIKE ? AND author.race LIKE ? AND author.birth_year BETWEEN ? AND ? "
-        			+ "GROUP BY author.author_id, author.name, author.gender, author.race, author.birth_Year; ";
+        	String query = "SELECT Author.author_id, Author.name, Author.gender, Author.race, Author.birth_year, GROUP_CONCAT(Book.title ORDER BY Book.title DESC SEPARATOR ', ') AS 'books', "
+        			+ " GROUP_CONCAT(Article.title ORDER BY Article.title DESC SEPARATOR ', ') AS 'journals' "
+        			+ "from hles.Author "
+        			+ "LEFT JOIN Author_of ON Author.author_id = Author_of.author_id "
+        			+ "LEFT JOIN Book ON Author_of.book_id = Book.book_id "
+        			+ "LEFT JOIN Article ON Author_of.article_id = Article.article_id WHERE "
+        			+ "Author.name LIKE ? AND Author.gender LIKE ? AND Author.race LIKE ? AND Author.birth_year BETWEEN ? AND ? "
+        			+ "GROUP BY Author.author_id, Author.name, Author.gender, Author.race, Author.birth_Year; ";
         	
         	try {
         		//Execute Query
@@ -177,8 +177,8 @@ public class AuthorSearch extends Application{
 				//Create List to store entries in 
 				ObservableList<Author> authors = FXCollections.observableArrayList();
                 //Add results to table
-				String[] cols = {"author.author_id","author.name","author.gender","author.race",
-								"author.birth_year","books","journals"};
+				String[] cols = {"Author.author_id","Author.name","Author.gender","Author.race",
+								"Author.birth_year","books","journals"};
         		String[] res = new String[7];
         		//Display results in Table
         		while(rs.next()) {

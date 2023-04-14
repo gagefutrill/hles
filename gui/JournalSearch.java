@@ -174,18 +174,18 @@ public class JournalSearch extends Application {
       
 
             // Construct query
-            String query = "SELECT journal.journal_id, journal.title, journal.issue, journal.volume, journal.issn, "
-            		+ "journal.num_articles, publisher.name, journal.pub_date, genre.name, language.name, copy_of.available "
-            		+ "FROM hles.journal "
-            		+ "INNER JOIN genre ON journal.genre_id = genre.genre_id "
-            		+ "INNER JOIN language ON journal.language_id = language.language_id "
-            		+ "INNER JOIN publisher_of ON journal.journal_id = publisher_of.journal_id "
-            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id "
-            		+ "INNER JOIN copy_of ON journal.journal_id = copy_of.journal_id WHERE ";
-                   query += "journal.title LIKE ? AND journal.issue LIKE ? AND ";
-                   query += "journal.volume LIKE ? AND journal.issn LIKE ? AND ";
-                   query += "publisher.name LIKE ? AND journal.pub_date LIKE ? AND ";
-                   query += "genre.name LIKE ? AND language.name LIKE ? ";
+            String query = "SELECT Journal.journal_id, Journal.title, Journal.issue, Journal.volume, Journal.issn, "
+            		+ "Journal.num_articles, Publisher.name, Journal.pub_date, Genre.name, Language.name, Copy_of.available "
+            		+ "FROM hles.Journal "
+            		+ "INNER JOIN Genre ON Journal.genre_id = Genre.genre_id "
+            		+ "INNER JOIN Language ON Journal.language_id = Language.language_id "
+            		+ "INNER JOIN Publisher_of ON Journal.journal_id = Publisher_of.journal_id "
+            		+ "INNER JOIN Publisher ON Publisher_of.publisher_id = Publisher.publisher_id "
+            		+ "INNER JOIN Copy_of ON Journal.journal_id = Copy_of.journal_id WHERE ";
+                   query += "Journal.title LIKE ? AND Journal.issue LIKE ? AND ";
+                   query += "Journal.volume LIKE ? AND Journal.issn LIKE ? AND ";
+                   query += "Publisher.name LIKE ? AND Journal.pub_date LIKE ? AND ";
+                   query += "Genre.name LIKE ? AND Language.name LIKE ? ";
 
             try {
                 // Execute query
@@ -204,17 +204,17 @@ public class JournalSearch extends Application {
                 ObservableList<Journal> journals = FXCollections.observableArrayList();
                 // Display results in Table
                 while (rs.next()) {
-                	String id = rs.getString("journal.journal_id");
-                    String titleResult = rs.getString("journal.title");
-                    String issueResult = rs.getString("journal.issue");
-                    String volumeResult = rs.getString("journal.volume");
-                    String issnResult = rs.getString("journal.issn");
-                    String numArtResult = rs.getString("journal.num_articles");
-                    String pubResult = rs.getString("publisher.name");
-                    String pubdateResult = rs.getString("journal.pub_date");
-                    String genreResult = rs.getString("genre.name");
-                    String languageResult = rs.getString("language.name");
-                    String availResult = rs.getString("copy_of.available");
+                	String id = rs.getString("Journal.journal_id");
+                    String titleResult = rs.getString("Journal.title");
+                    String issueResult = rs.getString("Journal.issue");
+                    String volumeResult = rs.getString("Journal.volume");
+                    String issnResult = rs.getString("Journal.issn");
+                    String numArtResult = rs.getString("Journal.num_articles");
+                    String pubResult = rs.getString("Publisher.name");
+                    String pubdateResult = rs.getString("Journal.pub_date");
+                    String genreResult = rs.getString("Genre.name");
+                    String languageResult = rs.getString("Language.name");
+                    String availResult = rs.getString("Copy_of.available");
                     
                     journals.add(new Journal(id,titleResult,issueResult,volumeResult,issnResult,numArtResult,pubResult,pubdateResult,genreResult,languageResult,availResult));
                 }

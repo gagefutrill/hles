@@ -180,16 +180,16 @@ public class MovieSearch extends Application {
             String language = languageField.getText();
           
             // Construct query
-            String query = "SELECT movie.movie_id,movie.title,movie.edition,movie.director,movie.isbn,publisher.name,movie.publish_date,genre.name,language.name,copy_of.available "
-            		+ "FROM hles.movie "
-            		+ "INNER JOIN genre ON movie.genre_id = genre.genre_id "
-            		+ "INNER JOIN language ON movie.language_id = language.language_id "
-            		+ "INNER JOIN publisher_of ON movie.movie_id = publisher_of.movie_id "
-            		+ "INNER JOIN publisher ON publisher_of.publisher_id = publisher.publisher_id "
-            		+ "INNER JOIN copy_of ON movie.movie_id = copy_of.movie_id WHERE ";
-                   query += "movie.title LIKE ? AND movie.edition LIKE ? AND ";
-                   query += "movie.director LIKE ? AND movie.isbn LIKE ? AND publisher.name LIKE ? AND ";
-                   query += "movie.publish_date LIKE ? AND genre.name LIKE ? AND language.name LIKE ?";
+            String query = "SELECT Movie.movie_id,Movie.title,Movie.edition,Movie.director,Movie.isbn,Publisher.name,Movie.publish_date,Genre.name,Language.name,Copy_of.available "
+            		+ "FROM hles.Movie "
+            		+ "INNER JOIN Genre ON movie.genre_id = genre.genre_id "
+            		+ "INNER JOIN Language ON Movie.language_id = Language.language_id "
+            		+ "INNER JOIN Publisher_of ON Movie.movie_id = Publisher_of.movie_id "
+            		+ "INNER JOIN Publisher ON Publisher_of.publisher_id = Publisher.publisher_id "
+            		+ "INNER JOIN Copy_of ON Movie.movie_id = Copy_of.movie_id WHERE ";
+                   query += "Movie.title LIKE ? AND Movie.edition LIKE ? AND ";
+                   query += "Movie.director LIKE ? AND Movie.isbn LIKE ? AND Publisher.name LIKE ? AND ";
+                   query += "Movie.publish_date LIKE ? AND Genre.name LIKE ? AND Language.name LIKE ?";
                    
                   
             try {
@@ -209,16 +209,16 @@ public class MovieSearch extends Application {
                 ObservableList<Movie> movies = FXCollections.observableArrayList();
                 // Display results in console
                 while (rs.next()) {
-                    String id = rs.getString("movie.movie_id");
-                    String titleResult = rs.getString("movie.title");
-                    String editionResult = rs.getString("movie.edition");
-                    String directorResult = rs.getString("movie.director");
-                    String isbnResult = rs.getString("movie.isbn");
-                    String pubResult = rs.getString("publisher.name");
-                    String pubYearResult = rs.getString("movie.publish_date");
-                    String genreResult = rs.getString("genre.name");
-                    String languageResult = rs.getString("language.name");
-                    String availResult = rs.getString("copy_of.available");
+                    String id = rs.getString("Movie.movie_id");
+                    String titleResult = rs.getString("Movie.title");
+                    String editionResult = rs.getString("Movie.edition");
+                    String directorResult = rs.getString("Movie.director");
+                    String isbnResult = rs.getString("Movie.isbn");
+                    String pubResult = rs.getString("Publisher.name");
+                    String pubYearResult = rs.getString("Movie.publish_date");
+                    String genreResult = rs.getString("Genre.name");
+                    String languageResult = rs.getString("Language.name");
+                    String availResult = rs.getString("Copy_of.available");
               
                     movies.add(new Movie(id,titleResult,editionResult,directorResult,isbnResult,pubResult,pubYearResult,genreResult,languageResult,availResult));
                 }

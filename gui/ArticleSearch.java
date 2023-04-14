@@ -168,19 +168,19 @@ public class ArticleSearch extends Application{
         	String lang = langField.getText();
         	
         	//Construct query 
-        	String query = "SELECT article.article_id,article.title,article.doi, GROUP_CONCAT(author.name ORDER BY author.name DESC SEPARATOR ', ') AS 'authors',"
+        	String query = "SELECT Article.article_id,Article.title,Article.doi, GROUP_CONCAT(Author.name ORDER BY Author.name DESC SEPARATOR ', ') AS 'authors',"
         			+ 	   "journal.title,article.publish_date,genre.name,language.name,copy_of.available "
-        			+ "FROM article "
-        			+ "INNER Join author_of ON article.article_id = author_of.article_id "
-        			+ "INNER join author ON author_of.author_id = author.author_id "
-        			+ "INNER JOIN genre ON article.genre_id = genre.genre_id "
-            		+ "INNER JOIN language ON article.language_id = language.language_id "
-            		+ "INNER JOIN article_in ON article.article_id = article_in.article_id "
-            		+ "INNER JOIN journal ON article_in.journal_id = journal.journal_id "
-            		+ "INNER JOIN copy_of ON journal.journal_id = copy_of.journal_id WHERE "
-            		+ "article.title LIKE ? AND article.doi LIKE ? AND author.name LIKE ? AND "
-            		+ "journal.title LIKE ?  AND genre.name LIKE ? AND language.name LIKE ? AND article.publish_date LIKE ? "
-        			+ "GROUP BY article.article_id,article.title,article.doi,journal.title,article.publish_date,genre.name,language.name,copy_of.available;";
+        			+ "FROM hles.Article "
+        			+ "INNER Join Author_of ON Article.article_id = Author_of.article_id "
+        			+ "INNER join Author ON Author_of.author_id = Author.author_id "
+        			+ "INNER JOIN Genre ON Article.genre_id = Genre.genre_id "
+            		+ "INNER JOIN Language ON Article.language_id = Language.language_id "
+            		+ "INNER JOIN Article_in ON Article.article_id = Article_in.article_id "
+            		+ "INNER JOIN Journal ON Article_in.journal_id = Journal.journal_id "
+            		+ "INNER JOIN Copy_of ON Journal.journal_id = Copy_of.journal_id WHERE "
+            		+ "Article.title LIKE ? AND Article.doi LIKE ? AND Author.name LIKE ? AND "
+            		+ "Journal.title LIKE ?  AND Genre.name LIKE ? AND Language.name LIKE ? AND Article.publish_date LIKE ? "
+        			+ "GROUP BY Article.article_id,Article.title,Article.doi,Journal.title,Article.publish_date,Genre.name,Language.name,Copy_of.available;";
         	
         	try { 
         		//Execute query
@@ -195,8 +195,8 @@ public class ArticleSearch extends Application{
         		ResultSet rs = stmt.executeQuery();
         		
         		ObservableList<Article> articles = FXCollections.observableArrayList();
-        		String[] cols = {"article.article_id","article.title","article.doi","authors",
-        				"journal.title","article.publish_date","genre.name","language.name","copy_of.available"};
+        		String[] cols = {"Article.article_id","Article.title","Article.doi","authors",
+        				"Journal.title","Article.publish_date","Genre.name","Language.name","Copy_of.available"};
         		String[] res = new String[9];
         		//Display results in Table
         		while(rs.next()) {
