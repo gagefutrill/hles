@@ -96,8 +96,8 @@ public class MovieSearch extends Application {
         TableColumn<Movie,String> langCol = new TableColumn<>("Language");
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
         TableColumn<Movie,String> availCol = new TableColumn<>("Available");
-        availCol.setCellValueFactory(new PropertyValueFactory<>("available"));
-        table.getColumns().addAll(idCol,titleCol,editionCol,directorCol,isbnCol,pubCol,pubDateCol,genreCol,langCol);
+        availCol.setCellValueFactory(new PropertyValueFactory<>("avail"));
+        table.getColumns().addAll(idCol,titleCol,editionCol,directorCol,isbnCol,pubCol,pubDateCol,genreCol,langCol,availCol);
         
       //Create text wrapping for large fields
         titleCol.setCellFactory(tc -> {
@@ -106,6 +106,15 @@ public class MovieSearch extends Application {
             cell.setGraphic(text);
             cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
             text.wrappingWidthProperty().bind(titleCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
+        editionCol.setCellFactory(tc -> {
+            TableCell<Movie, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(editionCol.widthProperty());
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
@@ -127,7 +136,15 @@ public class MovieSearch extends Application {
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
-        
+        genreCol.setCellFactory(tc -> {
+            TableCell<Movie, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(genreCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
         // Create layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -182,7 +199,7 @@ public class MovieSearch extends Application {
             // Construct query
             String query = "SELECT Movie.movie_id,Movie.title,Movie.edition,Movie.director,Movie.isbn,Publisher.name,Movie.publish_date,Genre.name,Language.name,Copy_of.available "
             		+ "FROM hles.Movie "
-            		+ "INNER JOIN Genre ON movie.genre_id = genre.genre_id "
+            		+ "INNER JOIN Genre ON Movie.genre_id = Genre.genre_id "
             		+ "INNER JOIN Language ON Movie.language_id = Language.language_id "
             		+ "INNER JOIN Publisher_of ON Movie.movie_id = Publisher_of.movie_id "
             		+ "INNER JOIN Publisher ON Publisher_of.publisher_id = Publisher.publisher_id "

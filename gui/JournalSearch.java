@@ -117,6 +117,15 @@ public class JournalSearch extends Application {
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
+        genreCol.setCellFactory(tc -> {
+            TableCell<Journal, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(genreCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
         
         // Create search and back buttons
         Button searchButton = new Button("Search");

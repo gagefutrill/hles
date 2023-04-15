@@ -119,6 +119,15 @@ public class ArticleSearch extends Application{
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
+        doiCol.setCellFactory(tc -> {
+            TableCell<Article, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(doiCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
         
         //Create layout
         GridPane grid = new GridPane();
@@ -169,7 +178,7 @@ public class ArticleSearch extends Application{
         	
         	//Construct query 
         	String query = "SELECT Article.article_id,Article.title,Article.doi, GROUP_CONCAT(Author.name ORDER BY Author.name DESC SEPARATOR ', ') AS 'authors',"
-        			+ 	   "journal.title,article.publish_date,genre.name,language.name,copy_of.available "
+        			+ 	   "Journal.title,Article.publish_date,Genre.name,Language.name,Copy_of.available "
         			+ "FROM hles.Article "
         			+ "INNER Join Author_of ON Article.article_id = Author_of.article_id "
         			+ "INNER join Author ON Author_of.author_id = Author.author_id "

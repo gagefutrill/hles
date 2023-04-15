@@ -96,6 +96,7 @@ public class BookSearch extends Application {
         langCol.setCellValueFactory(new PropertyValueFactory<>("langName"));
         TableColumn<Book,String> availCol = new TableColumn<>("Available");
         availCol.setCellValueFactory(new PropertyValueFactory<>("avail"));
+        table.getColumns().addAll(idCol,titleCol,editionCol,ISBNCol,authorsCol,pubCol,pubYearCol,genreCol,langCol,availCol);
         
         //Create text wrapping for large fields
         titleCol.setCellFactory(tc -> {
@@ -125,7 +126,15 @@ public class BookSearch extends Application {
             text.textProperty().bind(cell.itemProperty());
             return cell ;
         });
-        table.getColumns().addAll(idCol,titleCol,editionCol,ISBNCol,authorsCol,pubCol,pubYearCol,genreCol,langCol,availCol);
+        genreCol.setCellFactory(tc -> {
+            TableCell<Book, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(genreCol.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
         
         //Create layout
         GridPane grid = new GridPane();
@@ -187,13 +196,13 @@ public class BookSearch extends Application {
         			+ "INNER Join Author_of ON Book.book_id = Author_of.book_id "
         			+ "INNER join Author ON Author_of.author_id = Author.author_id "
         			+ "INNER JOIN Genre ON Book.genre_id = Genre.genre_id "
-            		+ "INNER JOIN Language ON book.Language_id = Language.Language_id "
+            		+ "INNER JOIN Language ON Book.language_id = Language.Language_id "
             		+ "INNER JOIN Publisher_of ON Book.book_id = Publisher_of.book_id "
             		+ "INNER JOIN Publisher ON Publisher_of.publisher_id = Publisher.publisher_id "
             		+ "INNER JOIN Copy_of ON Book.book_id = Copy_of.book_id WHERE "
             		+ "Book.title LIKE ? AND Book.edition LIKE ? AND Book.isbn LIKE ? AND Author.name LIKE ? AND "
             		+ "Publisher.name LIKE ? AND Book.publish_year LIKE ? AND Genre.name LIKE ? AND Language.name LIKE ? "
-        			+ "Group by Book.book_id,Book.title,Book.edition,Book.isbn,Publisher.name,Book.publish_year,genre.name,Language.name,Copy_of.available ; ";
+        			+ "Group by Book.book_id,Book.title,Book.edition,Book.isbn,Publisher.name,Book.publish_year,Genre.name,Language.name,Copy_of.available ; ";
         	
         	try { 
         		//Execute query
